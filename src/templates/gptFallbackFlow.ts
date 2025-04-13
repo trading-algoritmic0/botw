@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: config.ApiKey
 })
 
-export const gptFallbackFlow = addKeyword(/.*/) // 👈 esto captura cualquier mensaje de texto
+export const gptFallbackFlow = addKeyword(['*']) // ✅ compatible con tu versión
   .addAction(async (ctx) => {
     try {
       const completion = await openai.chat.completions.create({
