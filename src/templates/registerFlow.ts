@@ -1,6 +1,6 @@
 import { addKeyword, EVENTS } from "@builderbot/bot"
 import sheetsService from "../services/sheetsService"
-import { menuFlow } from "./menuFlow" // ✅ Importamos el flujo al que queremos redirigir
+import { gptFallbackFlow } from "./gptFallbackFlow" // ✅ Importa el flujo GPT
 
 const registerFlow = addKeyword(EVENTS.ACTION)
   .addAnswer(
@@ -15,9 +15,7 @@ const registerFlow = addKeyword(EVENTS.ACTION)
           "El registro fue cancelado. Podés volver a escribirle al bot para registrarte."
         )
       } else if (ctx.body === "Si, quiero!") {
-        await ctxFn.flowDynamic(
-          "Perfecto, voy a proceder a hacerte algunas preguntas 📝"
-        )
+        await ctxFn.flowDynamic("Perfecto, voy a hacerte algunas preguntas 📝")
       } else {
         return ctxFn.fallBack("Tenés que elegir alguna de las opciones.")
       }
@@ -46,10 +44,10 @@ const registerFlow = addKeyword(EVENTS.ACTION)
       await sheetsService.createUser(ctx.from, state.name, ctx.body)
 
       await ctxFn.flowDynamic(
-        "✅ ¡Excelente! Tus datos ya fueron cargados con éxito. Ahora podés ver las opciones disponibles 👇"
+        "✅ ¡Excelente! Tus datos ya fueron cargados. Ahora podés escribirme lo que necesites 👇"
       )
 
-      return ctxFn.gotoFlow(menuFlow) // ✅ Redirección automática al menú
+      return ctxFn.gotoFlow(gptFallbackFlow) // ✅ Redirige a conversación libre
     }
   )
 
