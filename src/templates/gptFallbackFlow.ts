@@ -1,4 +1,4 @@
-import { addKeyword, EVENTS } from '@builderbot/bot'
+import { addKeyword } from '@builderbot/bot'
 import OpenAI from 'openai'
 import { config } from '../config'
 
@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: config.ApiKey
 })
 
-export const gptFallbackFlow = addKeyword(EVENTS.MESSAGE)
+export const gptFallbackFlow = addKeyword(/.*/) // 👈 esto captura cualquier mensaje de texto
   .addAction(async (ctx) => {
     try {
       const completion = await openai.chat.completions.create({
@@ -14,7 +14,7 @@ export const gptFallbackFlow = addKeyword(EVENTS.MESSAGE)
         messages: [
           {
             role: 'system',
-            content: 'Responde como un asistente útil y directo.'
+            content: 'Responde como un asistente útil, amable y preciso.'
           },
           {
             role: 'user',
