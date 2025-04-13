@@ -15,7 +15,7 @@ export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
     try {
       // Redirección por palabra clave
       if (message.includes("menu") || message.includes("opciones")) {
-        await ctx.sendText("🔄 Te redirijo al menú de opciones...")
+        await ctx.sendText("🔁 Te redirijo al menú de opciones...")
         return ctxFn.gotoFlow(menuFlow)
       }
 
@@ -24,7 +24,7 @@ export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
         return ctxFn.gotoFlow(faqFlow)
       }
 
-      // OpenAI
+      // Llamada segura a OpenAI
       const completion = await openai.chat.completions.create({
         model: config.Model || 'gpt-3.5-turbo',
         messages: [
@@ -36,14 +36,28 @@ export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
             role: 'user',
             content: message
           }
-        ]
+        ],
+        temperature: 0.7 // estabilidad en las respuestas
       })
 
-      const reply = completion.choices?.[0]?.message?.content
-      await ctx.sendText(reply || '🤖 No pude generar una respuesta.')
+      const reply = completion?.choices?.[0]?.message?.content
+
+      if (!reply) {
+        await ctx.sendText("🤖 No encontré una respuesta adecuada.")
+      } else {
+        await ctx.sendText(reply)
+      }
 
     } catch (error: any) {
-      console.error('🔥 GPT Fallback Error:', error)
-      await ctx.sendText('⚠️ No pude responder en este momento.')
+      // 🧠 Diagnóstico del error con OpenAI
+      console.error('❌ GPT Fallback Error:', error)
+
+      if (error.response) {
+        const { status, data } = error.response
+        console.error(`🧾 OpenAI Response Error [${status}]:`, data)
+        await ctx.sendText(`⚠️ Error ${status}: ${data?.error?.message || "Fallo en la IA."}`)
+      } else {
+        await ctx.sendText('⚠️ Ocurrió un error inesperado. Intentalo más tarde.')
+      }
     }
   })
