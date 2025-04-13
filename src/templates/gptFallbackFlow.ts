@@ -6,15 +6,15 @@ const openai = new OpenAI({
   apiKey: config.ApiKey
 })
 
-export const gptFallbackFlow = addKeyword(['*']) // ✅ compatible con tu versión
+export const gptFallbackFlow = addKeyword(['__FALLBACK__']) // Palabra clave segura
   .addAction(async (ctx) => {
     try {
       const completion = await openai.chat.completions.create({
-        model: config.Model || 'gpt-4o-mini-2024-07-18',
+        model: config.Model || 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
-            content: 'Responde como un asistente útil, amable y preciso.'
+            content: 'Responde como un asistente claro, directo y útil.'
           },
           {
             role: 'user',
@@ -24,9 +24,9 @@ export const gptFallbackFlow = addKeyword(['*']) // ✅ compatible con tu versi�
       })
 
       const reply = completion.choices[0].message?.content
-      await ctx.sendText(reply || 'Lo siento, no pude responderte correctamente.')
+      await ctx.sendText(reply || 'Lo siento, no pude responder con precisión.')
     } catch (error) {
-      console.error('Error al consultar OpenAI:', error)
-      await ctx.sendText('⚠️ Ocurrió un error al generar la respuesta con IA.')
+      console.error('Error de OpenAI:', error)
+      await ctx.sendText('⚠️ No pude conectarme a la IA en este momento.')
     }
   })
