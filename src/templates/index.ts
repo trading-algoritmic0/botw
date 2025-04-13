@@ -7,6 +7,7 @@ import { createFlow } from "@builderbot/bot";
 import { mainFlow } from "./mainFlow";
 import { menuFlow } from "./menuFlow";
 import { faqFlow } from "./faqFlow";
+import { gptFallbackFlow } from "./gptFallbackFlow"; // <- NUEVA LÍNEA
 
 export default createFlow([
   mainFlow,
@@ -17,4 +18,5 @@ export default createFlow([
   sendPdfFlow,
   sendVoiceFlow,
   DetectIntention,
+  gptFallbackFlow // <- DEBE IR AL FINAL
 ]);
