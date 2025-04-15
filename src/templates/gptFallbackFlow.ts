@@ -9,19 +9,19 @@ const openai = new OpenAI({
 });
 
 export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
-  .addAction(async (ctx, ctxFn) => {
+  .addAction(async (ctx, { flowDynamic, gotoFlow }) => {
     // Convertir el mensaje a minúsculas para uniformidad
     const message = ctx.body ? ctx.body.toLowerCase() : "";
     try {
       // Redirigir a menú si se detecta "menu" u "opciones"
       if (message.includes("menu") || message.includes("opciones")) {
-        await ctxFn.reply("🔁 Te redirijo al menú de opciones...");
-        return ctxFn.gotoFlow(menuFlow);
+        await flowDynamic("🔁 Te redirijo al menú de opciones...");
+        return gotoFlow(menuFlow);
       }
       // Redirigir a FAQs si se detecta "faq"
       if (message.includes("faq")) {
-        await ctxFn.reply("📚 Aquí están las preguntas frecuentes.");
-        return ctxFn.gotoFlow(faqFlow);
+        await flowDynamic("📚 Aquí están las preguntas frecuentes.");
+        return gotoFlow(faqFlow);
       }
       // Llamada a la API de OpenAI
       const completion = await openai.chat.completions.create({
@@ -40,9 +40,9 @@ export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
       });
       const replyContent = completion?.choices?.[0]?.message?.content;
       if (!replyContent || typeof replyContent !== "string") {
-        await ctxFn.reply("🤖 No pude generar una respuesta útil.");
+        await flowDynamic("🤖 No pude generar una respuesta útil.");
       } else {
-        await ctxFn.reply(replyContent);
+        await flowDynamic(replyContent);
       }
     } catch (error: any) {
       console.error("❌ GPT Fallback Error:", error);
@@ -52,13 +52,13 @@ export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
         const msg =
           error.response.data?.error?.message ||
           "Error desconocido de la IA";
-        await ctxFn.reply(`⚠️ Error ${status}: ${msg}`);
+        await flowDynamic(`⚠️ Error ${status}: ${msg}`);
       } else if (error.message && error.message.includes("exceeded your current quota")) {
-        await ctxFn.reply(
+        await flowDynamic(
           "⚠️ Has excedido la cuota de OpenAI. Revisa tu plan y la facturación."
         );
       } else {
-        await ctxFn.reply(
+        await flowDynamic(
           "⚠️ Hubo un error al conectar con la IA. Intenta nuevamente."
         );
       }
