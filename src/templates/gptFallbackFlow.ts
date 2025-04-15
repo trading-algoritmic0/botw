@@ -25,7 +25,7 @@ export const gptFallbackFlow = addKeyword(['__FALLBACK__'])
       }
       // Llamada a la API de OpenAI
       const completion = await openai.chat.completions.create({
-        model: config.Model || "gpt-4o-mini",
+        model: config.Model || "gpt-3.5-turbo",
         messages: [
           {
             role: "system",
