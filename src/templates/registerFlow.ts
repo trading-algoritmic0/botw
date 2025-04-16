@@ -15,7 +15,7 @@ const registerFlow = addKeyword(EVENTS.ACTION)
         );
       } else if (ctx.body === "Si, quiero!") {
         await ctxFn.flowDynamic(
-          "Perfecto, voy a proceder a hacerte algunas preguntas 📝"
+          "Perfecto, voy a proceder a hacerte algunas preguntas."
         );
       } else {
         return ctxFn.fallBack("Tenés que elegir alguna de las opciones!");
@@ -40,14 +40,12 @@ const registerFlow = addKeyword(EVENTS.ACTION)
           "Por favor, ingresá un correo electrónico válido. 📧"
         );
       }
-
       const state = ctxFn.state.getMyState();
       await sheetsService.createUser(ctx.from, state.name, ctx.body);
-
+      // Mensaje adicional que indica que es un bot y muestra las opciones
       await ctxFn.flowDynamic([
-        "✅ ¡Excelente! Tus datos ya fueron cargados.",
-        "🤖 Soy un bot automatizado. Escribime lo que necesites o elegí una opción:",
-        "🧭 Escribí *Menú* para ver las opciones disponibles."
+        "✅ ¡Excelente! Tus datos ya fueron cargados, ya podés comenzar a utilizar el bot.",
+        "🤖 Soy un bot automatizado. Escribime lo que necesites o, si prefieres, escribí 'Menú' para ver las opciones disponibles."
       ]);
     }
   );
