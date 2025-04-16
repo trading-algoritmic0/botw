@@ -6,7 +6,7 @@ import { config } from "../config";
 import path from "path";
 import fs from "fs";
 
-// Leemos el prompt que se usará para la detección de intención.
+// Leemos el prompt para detección de intención
 const Prompt_DETECTED = path.join(
   process.cwd(),
   "public/assets/prompts",
@@ -14,55 +14,49 @@ const Prompt_DETECTED = path.join(
 );
 const promptDetected = fs.readFileSync(Prompt_DETECTED, "utf8");
 
-// Configuramos la llamada a la API en función de USE_GPT.
-// Si USE_GPT es "true", se usa la configuración real de OpenAI.
-// Si no, se pasa un objeto dummy para evitar llamar a la API.
-const aiModelConfig =
-  config.USE_GPT === "true"
-    ? {
-        modelName: "openai" as any,
-        args: {
-          modelName: config.Model,
-          apikey: config.ApiKey,
-        },
-      }
-    : {
-        modelName: "dummy",
-        args: {
-          modelName: "dummy",
-          apikey: "",
-        },
-      };
-
-export const DetectIntention = createFlowRouting
+// Configuramos la cadena base de detección de intención
+let routing = createFlowRouting
   .setKeyword(EVENTS.ACTION)
   .setIntentions({
     intentions: ["MENU_OPCIONES", "FAQ", "NO_DETECTED"],
     description: promptDetected,
-  })
-  .setAIModel(aiModelConfig)
-  .create({
-    afterEnd(flow) {
-      return flow.addAction(async (ctx, { state, gotoFlow, flowDynamic }) => {
-        try {
-          const detected = await state.get("intention");
-          console.log("INTENCION DETECT ", detected);
-          
-          // Si USE_GPT está desactivado o no se detectó intención, redirige al menú.
-          if (config.USE_GPT !== "true" || !detected || detected === "NO_DETECTED") {
-            await flowDynamic("❌ No se detectó una intención válida, redirigiendo al menú...");
-            return gotoFlow(menuFlow);
-          }
-          // Si se detectó intención válida, redirige según corresponda.
-          if (detected === "MENU_OPCIONES") {
-            return gotoFlow(menuFlow);
-          }
-          if (detected === "FAQ") {
-            return gotoFlow(faqFlow);
-          }
-        } catch (error) {
-          console.error("Error en DetectIntention: ", error);
-        }
-      });
+  });
+
+// Si USE_GPT está activado (es decir, es "true"), configuramos la llamada a OpenAI.
+// De lo contrario, no se llama a setAIModel, evitando que se inicialice ChatOpenAI.
+if (config.USE_GPT === "true") {
+  routing = routing.setAIModel({
+    modelName: "openai" as any,
+    args: {
+      modelName: config.Model,
+      apikey: config.ApiKey,
     },
   });
+}
+
+export const DetectIntention = routing.create({
+  afterEnd(flow) {
+    return flow.addAction(async (ctx, { state, gotoFlow, flowDynamic }) => {
+      try {
+        const detected = await state.get("intention");
+        console.log("INTENCION DETECT ", detected);
+
+        // Si no se detecta una intención válida o se obtiene "NO_DETECTED",
+        // redirige al menú.
+        if (!detected || detected === "NO_DETECTED") {
+          await flowDynamic("❌ No se detectó una intención válida, redirigiendo al menú...");
+          return gotoFlow(menuFlow);
+        }
+        // Si se detecta intención válida, redirige según corresponda.
+        if (detected === "MENU_OPCIONES") {
+          return gotoFlow(menuFlow);
+        }
+        if (detected === "FAQ") {
+          return gotoFlow(faqFlow);
+        }
+      } catch (error) {
+        console.error("Error en DetectIntention: ", error);
+      }
+    });
+  },
+});
