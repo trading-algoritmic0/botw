@@ -33,8 +33,8 @@ const main = async () => {
     },
     {
       queue: {
-        timeout: 20000,
-        concurrencyLimit: 50,
+        timeout: 20000, //👌
+        concurrencyLimit: 50, //👌
       },
     }
   );
@@ -42,13 +42,17 @@ const main = async () => {
 
   new ServerHttp(provider, bot);
 
-  // ✅ HEALTH CHECK
-  provider.server.get("/v1/health", (res) => {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: "ok" }));
-  });
+  provider.server.get(
+    "/v1/health",
+    (res: {
+      writeHead: (arg0: number, arg1: { "Content-Type": string }) => void;
+      end: (arg0: string) => void;
+    }) => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: "ok" }));
+    }
+  );
 
-  // ✅ BLACKLIST
   provider.server.post(
     "/v1/blacklist",
     handleCtx(async (bot, req, res) => {
@@ -66,39 +70,22 @@ const main = async () => {
     })
   );
 
-  // ✅ WEBHOOK BLINDADO (🔥 FIX principal)
-  provider.server.post("/webhook", async (req, res) => {
-    try {
-      console.log("[📩 Webhook recibido]", {
-        headers: req.headers,
-        body: req.body,
-      });
-
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ success: true }));
-    } catch (err: any) {
-      console.error("❌ Error en /webhook:", err);
-
-      res.writeHead(400, { "Content-Type": "application/json" });
-      const safeMessage =
-        err instanceof Error ? err.message : "Error inesperado en webhook";
-      res.end(JSON.stringify({ error: safeMessage }));
-    }
-  });
-
-  // ✅ MENSAJES ENTRANTES
   provider.on("message", (payload) => {
     queue.enqueue(async () => {
       try {
         const attachment = [];
 
+        // Verifica si el payload contiene una URL y si el cuerpo incluye "_event_"
         if (payload?.body?.includes("_event_") && payload?.url) {
           const { filePath } = await downloadFile(payload.url, config.jwtToken);
           if (filePath) {
+            // Asegúrate de que filePath no sea undefined o null
             attachment.push(filePath);
             console.log("FILE PATH", filePath);
           } else {
-            console.log("No se pudo descargar el archivo.");
+            console.log(
+              "No se pudo descargar el archivo o la ruta es inválida."
+            );
           }
         }
 
@@ -133,7 +120,7 @@ const main = async () => {
                 err
               );
             }
-          }
+          } 
         }
       } catch (err) {
         console.log("ERROR", err);
@@ -141,11 +128,10 @@ const main = async () => {
     });
   });
 
-  // ✅ MENSAJES SALIENTES
   bot.on("send_message", (payload) => {
     queue.enqueue(async () => {
       const attachment = [];
-      let absoluteFilePath = null;
+      let absoluteFilePath = null; // Inicializa como null para manejar el caso sin media
 
       if (payload.options?.media) {
         if (
@@ -158,10 +144,10 @@ const main = async () => {
             attachment.push(filePath);
             absoluteFilePath = path.resolve(filePath);
             console.log("FILE PATH", filePath);
-          }
+          } 
         } else if (typeof payload.options.media === "string") {
           attachment.push(payload.options.media);
-          absoluteFilePath = path.resolve(payload.options.media);
+          absoluteFilePath = path.resolve(payload.options.media); // Si se proporciona un archivo de media local
         }
       }
 
@@ -176,6 +162,7 @@ const main = async () => {
         chatwoot
       );
 
+      // Verifica si absoluteFilePath es válido antes de proceder
       if (absoluteFilePath) {
         const absoluteAssetsFolder = path.resolve(ASSETS_FOLDER);
 
@@ -198,12 +185,34 @@ const main = async () => {
             `Archivo no eliminado porque está en la carpeta de assets: ${absoluteFilePath}`
           );
         }
-      }
+      } 
     });
   });
 
-  // ✅ INICIAR SERVIDOR
   httpServer(+config.PORT);
 };
 
 main();
+
+/* OLD APP
+import { createBot } from '@builderbot/bot'
+import { MemoryDB as Database } from '@builderbot/bot'
+import { provider } from "./provider";
+import { config } from './config';
+import templates from './templates';
+
+const PORT = config.PORT
+
+const main = async () => {
+    const { handleCtx, httpServer } = await createBot({
+        flow: templates,
+        provider: provider,
+        database: new Database(),
+    })
+
+    httpServer(+PORT)
+}
+
+main()
+
+*/
