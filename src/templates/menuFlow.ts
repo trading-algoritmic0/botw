@@ -1,3 +1,4 @@
+
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { chatwoot } from "../app";
 
@@ -41,25 +42,24 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
-  .addAnswer("⌛ Esperando tu selección...", { capture: true }, async (ctx, { flowDynamic }) => {
+  .addAnswer("⌛ Esperando tu selección...", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
     const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
 
     switch (option) {
       case "mecanica_general":
         await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return;
+        return gotoFlow(menuFlow);
 
       case "repuestos":
         await flowDynamic("🛠️ Este flujo aún está en construcción.");
-        return;
+        return gotoFlow(menuFlow);
 
       case "consultar_citas":
         await flowDynamic("📅 Este flujo aún está en construcción.");
-        return;
+        return gotoFlow(menuFlow);
 
       case "contactar_asesor":
         await chatwoot.checkAndSetCustomAttribute();
-
         const inbox = await chatwoot.findOrCreateInbox({ name: "TecniRacer" });
 
         const contact = await chatwoot.findOrCreateContact({
@@ -68,8 +68,8 @@ const menuFlow = addKeyword(EVENTS.ACTION)
           inbox: inbox.id,
         });
 
-        // Buscar conversación activa
         const conversation = await chatwoot.getOpenConversation({
+          inbox_id: inbox.id,
           contact_id: contact.id,
         });
 
@@ -96,8 +96,11 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         }
 
         await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-        return;
+        return gotoFlow(menuFlow);
     }
+
+    await flowDynamic("❌ Opción no reconocida. Volvé a intentarlo:");
+    return gotoFlow(menuFlow);
   });
 
 export { menuFlow };
