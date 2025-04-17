@@ -41,21 +41,21 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
-  .addAction(async (ctx, { flowDynamic, ctxFn }) => {
+  .addAction(async (ctx, { flowDynamic }) => {
     const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
 
     switch (option) {
       case "mecanica_general":
         await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return ctxFn.endFlow();
+        return;
 
       case "repuestos":
         await flowDynamic("🛠️ Este flujo aún está en construcción.");
-        return ctxFn.endFlow();
+        return;
 
       case "consultar_citas":
         await flowDynamic("📅 Este flujo aún está en construcción.");
-        return ctxFn.endFlow();
+        return;
 
       case "contactar_asesor":
         await chatwoot.checkAndSetCustomAttribute();
@@ -82,11 +82,11 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         });
 
         await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-        return ctxFn.endFlow(); // << IMPORTANTE
+        return;
 
       default:
         await flowDynamic("⚠️ Por favor seleccioná una opción válida del menú.");
-        return ctxFn.endFlow();
+        return;
     }
   });
 
