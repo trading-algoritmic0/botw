@@ -79,7 +79,7 @@ class ChatwootClass {
     }
   };
 
-  public getOpenConversation = async (dataIn: { inbox_id: string; contact_id: string }) => {
+ public getOpenConversation = async (dataIn: { contact_id: string }) => {
   try {
     const url = this.buildBaseUrl(`/contacts/${dataIn.contact_id}/conversations`);
     const response = await fetch(url, {
@@ -92,7 +92,7 @@ class ChatwootClass {
     if (!Array.isArray((result as any).payload)) return null;
 
     const openConversation = (result as any).payload.find(
-      (c: any) => c.inbox_id === Number(dataIn.inbox_id) && c.status === "open"
+      (c: any) => c.status === "open"
     );
 
     return openConversation || null;
@@ -101,7 +101,6 @@ class ChatwootClass {
     return null;
   }
 };
-
 
   setCustomAttributes = async () => {
     try {
