@@ -461,34 +461,33 @@ class ChatwootClass {
   };
 }
 
-getOpenConversation = async (dataIn: { inbox_id: string; contact_id: string }) => {
-  try {
-    const url = this.buildBaseUrl(`/contacts/${dataIn.contact_id}/conversations`);
+  /**
+   * [CONVERSATION]
+   * Obtener conversación abierta directamente desde el contacto
+   */
+  getOpenConversation = async (dataIn: { inbox_id: string; contact_id: string }) => {
+    try {
+      const url = this.buildBaseUrl(`/contacts/${dataIn.contact_id}/conversations`);
+      const res = await fetch(url, {
+        method: "GET",
+        headers: this.buildHeader(),
+      });
 
-    const response = await fetch(url, {
-      method: "GET",
-      headers: this.buildHeader(),
-    });
+      const result = await res.json() as { payload: any[] };
 
-    const result = await response.json();
+      if (!Array.isArray(result.payload)) return null;
 
-    if (!Array.isArray(result.payload)) {
-      console.warn(`[getOpenConversation] payload no es un array`, result);
+      const openConversation = result.payload.find(
+        (c: any) =>
+          c.inbox_id === Number(dataIn.inbox_id) &&
+          c.status === "open"
+      );
+
+      return openConversation || null;
+    } catch (error) {
+      console.error(`[Error getOpenConversation]`, error);
       return null;
     }
-
-    const openConversation = result.payload.find(
-      (c: any) =>
-        c.inbox_id === Number(dataIn.inbox_id) &&
-        c.status === "open"
-    );
-
-    return openConversation || null;
-  } catch (error) {
-    console.error(`[Error getOpenConversation]`, error);
-    return null;
-  }
-};
-
+  };
 
 export { ChatwootClass };
