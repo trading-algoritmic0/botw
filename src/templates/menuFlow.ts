@@ -1,4 +1,4 @@
-import { addKeyword, EVENTS, END_FLOW } from "@builderbot/bot";
+import { addKeyword, EVENTS } from "@builderbot/bot";
 import { chatwoot } from "../app";
 
 const menuFlow = addKeyword(EVENTS.ACTION)
