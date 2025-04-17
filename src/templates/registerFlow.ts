@@ -54,3 +54,5 @@ const registerFlow = addKeyword(EVENTS.ACTION)
       }
 
       const state = ctxFn.state.getMyState
+      export { registerFlow }; // ← necesario para que el import nombrado funcione
+
