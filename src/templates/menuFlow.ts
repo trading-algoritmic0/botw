@@ -57,36 +57,49 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         await flowDynamic("📅 Este flujo aún está en construcción.");
         return;
 
-      case "contactar_asesor":
-        await chatwoot.checkAndSetCustomAttribute();
+case "contactar_asesor":
+  await chatwoot.checkAndSetCustomAttribute();
 
-        const inbox = await chatwoot.findOrCreateInbox({ name: "TecniRacer" });
+  const inbox = await chatwoot.findOrCreateInbox({ name: "TecniRacer" });
 
-        const contact = await chatwoot.findOrCreateContact({
-          from: ctx.from,
-          name: ctx.pushName || "Cliente",
-          inbox: inbox.id,
-        });
+  const contact = await chatwoot.findOrCreateContact({
+    from: ctx.from,
+    name: ctx.pushName || "Cliente",
+    inbox: inbox.id,
+  });
 
-        const conversation = await chatwoot.findOrCreateConversation({
-          inbox_id: inbox.id,
-          contact_id: contact.id,
-          phone_number: ctx.from,
-        });
+  // Buscar si ya hay una conversación abierta (NO crear otra)
+  const conversation = await chatwoot.getOpenConversation({
+    inbox_id: inbox.id,
+    contact_id: contact.id,
+  });
 
-        await chatwoot.createMessage({
-          msg: "📩 El cliente ha solicitado hablar con un asesor desde el menú.",
-          mode: "incoming",
-          conversation_id: conversation.id,
-          attachment: [],
-        });
+  if (!conversation) {
+    // Si no existe, crearla
+    const newConversation = await chatwoot.findOrCreateConversation({
+      inbox_id: inbox.id,
+      contact_id: contact.id,
+      phone_number: ctx.from,
+    });
 
-        await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-        return;
+    await chatwoot.createMessage({
+      msg: "📩 El cliente ha solicitado hablar con un asesor desde el menú.",
+      mode: "incoming",
+      conversation_id: newConversation.id,
+      attachment: [],
+    });
+  } else {
+    // Ya existe conversación activa, agrega mensaje ahí
+    await chatwoot.createMessage({
+      msg: "📩 El cliente ha vuelto a solicitar hablar con un asesor desde el menú.",
+      mode: "incoming",
+      conversation_id: conversation.id,
+      attachment: [],
+    });
+  }
 
-      default:
-        await flowDynamic("⚠️ Por favor seleccioná una opción válida del menú.");
-        return;
+  await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
+  return;
     }
   });
 
