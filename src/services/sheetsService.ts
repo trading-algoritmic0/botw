@@ -48,7 +48,7 @@ class SheetManager {
                 range: 'Users!A:D',
                 valueInputOption: 'RAW',
                 requestBody: {
-                    values: [[numero, nombre, correo, placa]],
+                    values: [[number, name, mail, plate]],
                 },
             });
 
