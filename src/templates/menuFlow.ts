@@ -9,7 +9,7 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
         text: "Menú de Opciones",
       },
       body: {
-        text: "Seleccioná lo que necesitás 👇\n\nTecniRacer  🛠️",
+        text: "Seleccioná lo que necesitás 👇\n\nTecniRacer  💠",
       },
       footer: {
         text: "",
@@ -27,12 +27,12 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
               },
               {
                 id: "repuestos",
-                title: "🛠️ Repuestos",
+                title: "💪 Repuestos",
                 description: "Pedir repuestos o consultar stock",
               },
               {
                 id: "consultar_citas",
-                title: "📅 Consultar Citas",
+                title: "🗕️ Consultar Citas",
                 description: "Ver tus citas agendadas",
               },
               {
@@ -46,27 +46,26 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
       },
     };
 
-    // Enviar menú
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   }
 ).addAction(
-  async (ctx, { gotoFlow, flowDynamic }) => {
+  async (ctx, { gotoFlow, flowDynamic, endFlow }) => {
     const option = ctx?.id;
 
     switch (option) {
       case "mecanica_general":
         await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return;
+        return endFlow();
 
       case "repuestos":
-        await flowDynamic("🛠️ Este flujo aún está en construcción.");
-        return;
+        await flowDynamic("💪 Este flujo aún está en construcción.");
+        return endFlow();
 
       case "consultar_citas":
-        await flowDynamic("📅 Este flujo aún está en construcción.");
-        return;
+        await flowDynamic("🗕️ Este flujo aún está en construcción.");
+        return endFlow();
 
-      case "contactar_asesor":
+      case "contactar_asesor": {
         await chatwoot.checkAndSetCustomAttribute();
 
         const inbox = await chatwoot.findOrCreateInbox({
@@ -92,9 +91,8 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
           attachment: [],
         });
 
-        return ctxFn.endFlow(
-          "🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos."
-        );
+        return endFlow("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
+      }
 
       default:
         await flowDynamic("⚠️ Por favor seleccioná una opción válida del menú.");
