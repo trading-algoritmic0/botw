@@ -13,7 +13,7 @@ import fs from "fs";
 
 const ASSETS_FOLDER = path.join(process.cwd(), "public/assets");
 
-const chatwoot = new ChatwootClass({
+export const chatwoot = new ChatwootClass({
   account: config.CHATWOOT_ACCOUNT_ID,
   token: config.CHATWOOT_TOKEN,
   endpoint: config.CHATWOOT_ENDPOINT,
