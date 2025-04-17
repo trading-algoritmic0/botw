@@ -40,7 +40,7 @@ class SheetManager {
     }
 
     // Función para crear un usuario y una nueva pestaña
-    async createUser(number: string, name: string, mail: string): Promise<void> {
+    async createUser(number: string, name: string, mail: string, plate: string): Promise<void> {
         try {
             // Agregar el usuario a la pestaña 'Users'
             await this.sheets.spreadsheets.values.append({
