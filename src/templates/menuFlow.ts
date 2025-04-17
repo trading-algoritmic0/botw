@@ -41,43 +41,39 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
-  .addAnswer("", { capture: true }, async (ctx, { flowDynamic, endFlow }) => {
+  .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
     const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
 
     switch (option) {
       case "mecanica_general":
         await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return;
+        return gotoFlow(menuFlow);
 
       case "repuestos":
         await flowDynamic("🛠️ Este flujo aún está en construcción.");
-        return;
+        return gotoFlow(menuFlow);
 
       case "consultar_citas":
         await flowDynamic("📅 Este flujo aún está en construcción.");
-        return;
+        return gotoFlow(menuFlow);
 
       case "contactar_asesor":
-        // Asegura que los atributos personalizados estén definidos
+        // Usar solo el inbox principal "Chatbot"
+        const inbox = await chatwoot.findOrCreateInbox({ name: "Chatbot" });
+
         await chatwoot.checkAndSetCustomAttribute();
 
-        // Buscar o crear el inbox "TecniRacer"
-        const inbox = await chatwoot.findOrCreateInbox({ name: "TecniRacer" });
-
-        // Buscar o crear contacto
         const contact = await chatwoot.findOrCreateContact({
           from: ctx.from,
           name: ctx.pushName || "Cliente",
           inbox: inbox.id,
         });
 
-        // Buscar conversación abierta
         const openConversation = await chatwoot.getOpenConversation({
           contact_id: contact.id,
           inbox_id: inbox.id,
         });
 
-        // Enviar mensaje según si hay conversación abierta o no
         if (openConversation) {
           await chatwoot.createMessage({
             msg: "📩 El cliente ha vuelto a solicitar hablar con un asesor desde el menú.",
@@ -103,11 +99,11 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         }
 
         await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-        return endFlow(); // 🛑 Finaliza el flujo aquí
+        return endFlow(); // termina el flujo
 
       default:
         await flowDynamic("❌ Opción no válida. Por favor, seleccioná una del menú.");
-        return;
+        return gotoFlow(menuFlow);
     }
   });
 
