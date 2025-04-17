@@ -79,18 +79,29 @@ class ChatwootClass {
     }
   };
 
-  getOpenConversation = async (dataIn: { inbox_id: string; contact_id: string }) => {
-    try {
-      const url = this.buildBaseUrl(`/contacts/${dataIn.contact_id}/conversations`);
-      const response = await fetch(url, { method: "GET", headers: this.buildHeader() });
-      const result = await response.json() as { payload?: any[] };
-      if (!Array.isArray(result.payload)) return null;
-      return result.payload.find(c => c.inbox_id === Number(dataIn.inbox_id) && c.status === "open") || null;
-    } catch (error) {
-      console.error(`[Error getOpenConversation]`, error);
-      return null;
-    }
-  };
+  public getOpenConversation = async (dataIn: { inbox_id: string; contact_id: string }) => {
+  try {
+    const url = this.buildBaseUrl(`/contacts/${dataIn.contact_id}/conversations`);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: this.buildHeader(),
+    });
+
+    const result = await response.json();
+
+    if (!Array.isArray((result as any).payload)) return null;
+
+    const openConversation = (result as any).payload.find(
+      (c: any) => c.inbox_id === Number(dataIn.inbox_id) && c.status === "open"
+    );
+
+    return openConversation || null;
+  } catch (error) {
+    console.error("[Error getOpenConversation]", error);
+    return null;
+  }
+};
+
 
   setCustomAttributes = async () => {
     try {
