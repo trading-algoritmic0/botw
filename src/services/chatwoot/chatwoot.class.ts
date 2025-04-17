@@ -79,7 +79,7 @@ class ChatwootClass {
     }
   };
 
- public getOpenConversation = async (dataIn: { contact_id: string }) => {
+public getOpenConversation = async (dataIn: { inbox_id: string; contact_id: string }) => {
   try {
     const url = this.buildBaseUrl(`/contacts/${dataIn.contact_id}/conversations`);
     const response = await fetch(url, {
