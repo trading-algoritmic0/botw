@@ -1,15 +1,15 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { chatwoot } from "../app";
 
-const menuFlow = addKeyword(EVENTS.ACTION).addAction(
-  async (ctx, { provider, flowDynamic }) => {
+const menuFlow = addKeyword(EVENTS.ACTION)
+  .addAction(async (ctx, { provider }) => {
     const list = {
       header: {
         type: "text",
         text: "Menú de Opciones",
       },
       body: {
-        text: "Seleccioná lo que necesitás 👇\n\nTecniRacer  💠",
+        text: "Seleccioná lo que necesitás 👇\n\nTecniRacer 💠",
       },
       footer: {
         text: "",
@@ -27,12 +27,12 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
               },
               {
                 id: "repuestos",
-                title: "💪 Repuestos",
+                title: "🛠️ Repuestos",
                 description: "Pedir repuestos o consultar stock",
               },
               {
                 id: "consultar_citas",
-                title: "🗕️ Consultar Citas",
+                title: "📅 Consultar Citas",
                 description: "Ver tus citas agendadas",
               },
               {
@@ -47,30 +47,33 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
     };
 
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
-  }
-).addAction(
-  async (ctx, { gotoFlow, flowDynamic, endFlow }) => {
+  })
+  .addAction(async (ctx, { flowDynamic, ctxFn }) => {
     const option = ctx?.id;
+
+    // Validación: si no viene de una opción seleccionada
+    if (!option) {
+      await flowDynamic("⚠️ Por favor seleccioná una opción del listado usando *Ver opciones*.");
+      return ctxFn.endFlow(); // finaliza el flujo para evitar que siga "escuchando"
+    }
 
     switch (option) {
       case "mecanica_general":
         await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return endFlow();
+        return ctxFn.endFlow();
 
       case "repuestos":
-        await flowDynamic("💪 Este flujo aún está en construcción.");
-        return endFlow();
+        await flowDynamic("🛠️ Este flujo aún está en construcción.");
+        return ctxFn.endFlow();
 
       case "consultar_citas":
-        await flowDynamic("🗕️ Este flujo aún está en construcción.");
-        return endFlow();
+        await flowDynamic("📅 Este flujo aún está en construcción.");
+        return ctxFn.endFlow();
 
-      case "contactar_asesor": {
+      case "contactar_asesor":
         await chatwoot.checkAndSetCustomAttribute();
 
-        const inbox = await chatwoot.findOrCreateInbox({
-          name: "TecniRacer",
-        });
+        const inbox = await chatwoot.findOrCreateInbox({ name: "TecniRacer" });
 
         const contact = await chatwoot.findOrCreateContact({
           from: ctx.from,
@@ -91,13 +94,9 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
           attachment: [],
         });
 
-        return endFlow("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-      }
-
-      default:
-        await flowDynamic("⚠️ Por favor seleccioná una opción válida del menú.");
+        await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
+        return ctxFn.endFlow();
     }
-  }
-);
+  });
 
 export { menuFlow };
