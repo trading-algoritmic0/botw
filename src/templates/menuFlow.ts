@@ -4,16 +4,9 @@ import { chatwoot } from "../app";
 const menuFlow = addKeyword(EVENTS.ACTION)
   .addAction(async (ctx, { provider }) => {
     const list = {
-      header: {
-        type: "text",
-        text: "Menú de Opciones",
-      },
-      body: {
-        text: "Seleccioná lo que necesitás 👇\n\nTecniRacer 💠",
-      },
-      footer: {
-        text: "",
-      },
+      header: { type: "text", text: "Menú de Opciones" },
+      body: { text: "Seleccioná lo que necesitás 👇\n\nTecniRacer 💠" },
+      footer: { text: "" },
       action: {
         button: "📋 Ver opciones",
         sections: [
@@ -49,13 +42,7 @@ const menuFlow = addKeyword(EVENTS.ACTION)
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
   .addAction(async (ctx, { flowDynamic, ctxFn }) => {
-    const option = ctx?.id;
-
-    // Validación: si no viene de una opción seleccionada
-    if (!option) {
-      await flowDynamic("⚠️ Por favor seleccioná una opción del listado usando *Ver opciones*.");
-      return ctxFn.endFlow(); // finaliza el flujo para evitar que siga "escuchando"
-    }
+    const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
 
     switch (option) {
       case "mecanica_general":
@@ -95,6 +82,10 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         });
 
         await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
+        return ctxFn.endFlow(); // << IMPORTANTE
+
+      default:
+        await flowDynamic("⚠️ Por favor seleccioná una opción válida del menú.");
         return ctxFn.endFlow();
     }
   });
