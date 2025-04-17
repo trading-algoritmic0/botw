@@ -1,6 +1,6 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import sheetsService from "../services/sheetsService";
-import { menuFlow } from "./menuFlow"; // Asegúrate de que este archivo exista
+import { menuFlow } from "./menuFlow";
 
 const registerFlow = addKeyword(EVENTS.ACTION)
   .addAnswer(
@@ -11,9 +11,7 @@ const registerFlow = addKeyword(EVENTS.ACTION)
     },
     async (ctx, ctxFn) => {
       if (ctx.body === "No, gracias!") {
-        return ctxFn.endFlow(
-          "✅ Registro cancelado. Podés escribirme en cualquier momento para registrarte."
-        );
+        return ctxFn.endFlow("✅ Registro cancelado. Podés escribirme en cualquier momento para registrarte.");
       } else if (ctx.body === "Sí, quiero!") {
         await ctxFn.flowDynamic("Perfecto, voy a hacerte algunas preguntas. ✍️");
       } else {
@@ -25,8 +23,8 @@ const registerFlow = addKeyword(EVENTS.ACTION)
     `Primero, ¿cuál es tu *nombre*?`,
     { capture: true },
     async (ctx, ctxFn) => {
-      await ctxFn.flowDynamic(`Gracias ${ctx.body} 🙌`);
       await ctxFn.state.update({ name: ctx.body });
+      await ctxFn.flowDynamic(`Gracias ${ctx.body} 🙌`);
     }
   )
   .addAnswer(
@@ -48,28 +46,20 @@ const registerFlow = addKeyword(EVENTS.ACTION)
       const normalizedPlate = rawPlate.toUpperCase().replace(/[^A-Z0-9]/g, "");
 
       if (normalizedPlate.length < 6 || normalizedPlate.length > 7) {
-        return ctxFn.fallBack(
-          "🚫 Placa inválida. Asegurate de escribirla en este formato: *DFG456*, sin guiones ni espacios."
-        );
+        return ctxFn.fallBack("🚫 Placa inválida. Asegurate de escribirla en este formato: *DFG456*, sin guiones ni espacios.");
       }
 
       const state = ctxFn.state.getMyState();
-      await ctxFn.state.update({ plate: normalizedPlate });
-
-      await sheetsService.createUser(
-        ctx.from,
-        state.name,
-        state.email,
-        normalizedPlate
-      );
+      await sheetsService.createUser(ctx.from, state.name, state.email, normalizedPlate);
 
       await ctxFn.flowDynamic([
         "✅ ¡Registro completo!",
         "🚀 Ahora te mostraré el menú de opciones."
       ]);
 
+      // 👉 Aquí evitamos que el flujo anterior siga capturando mensajes
       return ctxFn.gotoFlow(menuFlow);
     }
   );
 
-export { registerFlow }; // ✅ Esto debe estar fuera del flujo, al final del archivo
+export { registerFlow };
