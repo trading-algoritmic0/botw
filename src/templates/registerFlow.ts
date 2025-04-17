@@ -53,6 +53,23 @@ const registerFlow = addKeyword(EVENTS.ACTION)
         );
       }
 
-      const state = ctxFn.state.getMyState
-      export { registerFlow }; // ← necesario para que el import nombrado funcione
+      const state = ctxFn.state.getMyState();
+      await ctxFn.state.update({ plate: normalizedPlate });
 
+      await sheetsService.createUser(
+        ctx.from,
+        state.name,
+        state.email,
+        normalizedPlate
+      );
+
+      await ctxFn.flowDynamic([
+        "✅ ¡Registro completo!",
+        "🚀 Ahora te mostraré el menú de opciones."
+      ]);
+
+      return ctxFn.gotoFlow(menuFlow);
+    }
+  );
+
+export { registerFlow }; // ✅ Esto debe estar fuera del flujo, al final del archivo
