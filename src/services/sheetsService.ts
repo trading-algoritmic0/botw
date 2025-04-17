@@ -45,10 +45,10 @@ class SheetManager {
             // Agregar el usuario a la pestaña 'Users'
             await this.sheets.spreadsheets.values.append({
                 spreadsheetId: this.spreadsheetId,
-                range: 'Users!A:C',
+                range: 'Users!A:D',
                 valueInputOption: 'RAW',
                 requestBody: {
-                    values: [[number, name, mail]],
+                    values: [[numero, nombre, correo, placa]],
                 },
             });
 
