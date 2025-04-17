@@ -1,5 +1,4 @@
-
-import { addKeyword, EVENTS } from "@builderbot/bot";
+import { addKeyword, EVENTS, END_FLOW } from "@builderbot/bot";
 import { chatwoot } from "../app";
 
 const menuFlow = addKeyword(EVENTS.ACTION)
@@ -42,24 +41,25 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
-  .addAnswer("⌛ Esperando tu selección...", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+  .addAnswer(null, { capture: true }, async (ctx, { flowDynamic }) => {
     const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
 
     switch (option) {
       case "mecanica_general":
         await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return gotoFlow(menuFlow);
+        return END_FLOW;
 
       case "repuestos":
         await flowDynamic("🛠️ Este flujo aún está en construcción.");
-        return gotoFlow(menuFlow);
+        return END_FLOW;
 
       case "consultar_citas":
         await flowDynamic("📅 Este flujo aún está en construcción.");
-        return gotoFlow(menuFlow);
+        return END_FLOW;
 
       case "contactar_asesor":
         await chatwoot.checkAndSetCustomAttribute();
+
         const inbox = await chatwoot.findOrCreateInbox({ name: "TecniRacer" });
 
         const contact = await chatwoot.findOrCreateContact({
@@ -69,14 +69,14 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         });
 
         const conversation = await chatwoot.getOpenConversation({
-          inbox_id: inbox.id,
           contact_id: contact.id,
+          inbox_id: inbox.id,
         });
 
         if (!conversation) {
-          const newConversation = await chatwoot.findOrCreateConversation({
-            inbox_id: inbox.id,
+          const newConversation = await chatwoot.createConversation({
             contact_id: contact.id,
+            inbox_id: inbox.id,
             phone_number: ctx.from,
           });
 
@@ -96,11 +96,12 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         }
 
         await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-        return gotoFlow(menuFlow);
-    }
+        return END_FLOW;
 
-    await flowDynamic("❌ Opción no reconocida. Volvé a intentarlo:");
-    return gotoFlow(menuFlow);
+      default:
+        await flowDynamic("❌ Opción no válida. Por favor seleccioná del menú.");
+        return END_FLOW;
+    }
   });
 
 export { menuFlow };
