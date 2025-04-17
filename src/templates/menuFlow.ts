@@ -1,46 +1,105 @@
-import { addKeyword, EVENTS } from "@builderbot/bot";
+import { addKeyword } from "@builderbot/bot";
+import { mechanicalFlow } from "./mechanicalFlow";
+import { partsFlow } from "./partsFlow";
+import { appointmentsFlow } from "./appointmentsFlow";
+import { chatwoot } from "../app"; // Asegúrate que esté exportado en app.ts
 
-const menuFlow = addKeyword(EVENTS.ACTION).addAction(
-  async (ctx, { provider }) => {
+const menuFlow = addKeyword(["menu", "menú", "opciones", "volver"])
+  .addAction(async (ctx, { provider, state, gotoFlow, fallBack, flowDynamic }) => {
     const list = {
       header: {
         type: "text",
-        text: "Menu de Opciones",
+        text: "Menú de Opciones",
       },
       body: {
-        text: "Te voy a dar las opciones que tengo disponibles",
+        text: "Seleccioná lo que necesitás 👇",
       },
       footer: {
-        text: "",
+        text: "TecniRacer - Sin adornos, solo mecánica pura 🛠️",
       },
       action: {
-        button: "Opciones",
+        button: "📋 Ver opciones",
         sections: [
           {
-            title: "Acciones",
+            title: "Servicios disponibles",
             rows: [
               {
-                id: "GS0310971",
-                title: "Audio",
-                description: "🔊 Quiero escuchar un audio",
+                id: "mecanica_general",
+                title: "🔧 Mecánica General",
+                description: "Mantenimiento, revisión, diagnóstico",
               },
               {
-                id: "GS0310972",
-                title: "Imagen",
-                description: "🖼️ Quiero recibir una imagen",
+                id: "repuestos",
+                title: "🛠️ Repuestos",
+                description: "Consulta repuestos con un asesor",
               },
               {
-                id: "GS0310973",
-                title: "PDF",
-                description: "🧾 Quiero recibir un PDF",
+                id: "consultar_citas",
+                title: "📅 Consultar Citas",
+                description: "Ver tus citas agendadas",
+              },
+              {
+                id: "contactar_asesor",
+                title: "💬 Contactar Asesor",
+                description: "Hablar con una persona del equipo",
               },
             ],
           },
         ],
       },
     };
+
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
-  }
-);
+  })
+
+  // Manejamos la selección
+  .addAction(async (ctx, { gotoFlow, fallBack, flowDynamic, state }) => {
+    const option = ctx?.body?.toLowerCase();
+
+    switch (option) {
+      case "🔧 mecánica general":
+        return gotoFlow(mechanicalFlow);
+
+      case "🛠️ repuestos":
+        return gotoFlow(partsFlow);
+
+      case "📅 consultar citas":
+        return gotoFlow(appointmentsFlow);
+
+      case "💬 contactar asesor": {
+        const userState = state.getMyState();
+
+        // Creamos conversación con Chatwoot
+        await chatwoot.findOrCreateInbox({ name: "Chatbot" });
+        await chatwoot.checkAndSetCustomAttribute();
+
+        const contact = await chatwoot.findOrCreateContact({
+          from: ctx.from,
+          name: userState?.name || "Cliente",
+          inbox: "Chatbot",
+        });
+
+        const conversation = await chatwoot.findOrCreateConversation({
+          inbox_id: contact.inbox_id || contact.inbox?.id,
+          contact_id: contact.id,
+          phone_number: ctx.from,
+        });
+
+        await chatwoot.createMessage({
+          msg: `📥 *Nuevo cliente solicita hablar con un asesor*\n\n📱 Número: +${ctx.from}\n👤 Nombre: ${userState?.name || "Desconocido"}`,
+          mode: "incoming",
+          conversation_id: conversation.id,
+          attachment: [],
+        });
+
+        await flowDynamic("✅ Te he conectado con un asesor. En breve te responderán.");
+
+        return;
+      }
+
+      default:
+        return fallBack("⚠️ Por favor seleccioná una opción válida del menú.");
+    }
+  });
 
 export { menuFlow };
