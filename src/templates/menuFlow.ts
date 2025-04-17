@@ -92,7 +92,7 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
           attachment: [],
         });
 
-        return await flowDynamic(
+        return ctxFn.endFlow(
           "🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos."
         );
 
