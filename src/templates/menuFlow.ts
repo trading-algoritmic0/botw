@@ -41,7 +41,7 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
-  .addAction(async (ctx, { flowDynamic }) => {
+  .addAnswer("⌛ Esperando tu selección...", { capture: true }, async (ctx, { flowDynamic }) => {
     const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
 
     switch (option) {
