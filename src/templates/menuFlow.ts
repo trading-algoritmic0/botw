@@ -89,6 +89,7 @@ const menuFlow = addKeyword(EVENTS.ACTION).addAction(
           msg: "📩 El cliente ha solicitado hablar con un asesor desde el menú.",
           mode: "incoming",
           conversation_id: conversation.id,
+          attachment: [],
         });
 
         return await flowDynamic(
