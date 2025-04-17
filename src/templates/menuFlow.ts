@@ -70,7 +70,6 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
         // Buscar conversación activa
         const conversation = await chatwoot.getOpenConversation({
-          inbox_id: inbox.id,
           contact_id: contact.id,
         });
 
