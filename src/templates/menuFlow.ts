@@ -1,37 +1,34 @@
-import { addKeyword } from "@builderbot/bot";
-import { mechanicalFlow } from "./mechanicalFlow";
-import { partsFlow } from "./partsFlow";
-import { appointmentsFlow } from "./appointmentsFlow";
-import { chatwoot } from "../app"; // Asegúrate que esté exportado en app.ts
+import { addKeyword, EVENTS } from "@builderbot/bot";
+import { chatwoot } from "../app";
 
-const menuFlow = addKeyword(["menu", "menú", "opciones", "volver"])
-  .addAction(async (ctx, { provider, state, gotoFlow, fallBack, flowDynamic }) => {
+const menuFlow = addKeyword(EVENTS.ACTION).addAction(
+  async (ctx, { provider, flowDynamic }) => {
     const list = {
       header: {
         type: "text",
         text: "Menú de Opciones",
       },
       body: {
-        text: "Seleccioná lo que necesitás 👇",
+        text: "Seleccioná lo que necesitás 👇\n\nTecniRacer  🛠️",
       },
       footer: {
-        text: "TecniRacer - Sin adornos, solo mecánica pura 🛠️",
+        text: "",
       },
       action: {
         button: "📋 Ver opciones",
         sections: [
           {
-            title: "Servicios disponibles",
+            title: "Opciones disponibles",
             rows: [
               {
                 id: "mecanica_general",
                 title: "🔧 Mecánica General",
-                description: "Mantenimiento, revisión, diagnóstico",
+                description: "Servicios y mantenimiento",
               },
               {
                 id: "repuestos",
                 title: "🛠️ Repuestos",
-                description: "Consulta repuestos con un asesor",
+                description: "Pedir repuestos o consultar stock",
               },
               {
                 id: "consultar_citas",
@@ -49,57 +46,59 @@ const menuFlow = addKeyword(["menu", "menú", "opciones", "volver"])
       },
     };
 
+    // Enviar menú
     await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
-  })
-
-  // Manejamos la selección
-  .addAction(async (ctx, { gotoFlow, fallBack, flowDynamic, state }) => {
-    const option = ctx?.body?.toLowerCase();
+  }
+).addAction(
+  async (ctx, { gotoFlow, flowDynamic }) => {
+    const option = ctx?.id;
 
     switch (option) {
-      case "🔧 mecánica general":
-        return gotoFlow(mechanicalFlow);
+      case "mecanica_general":
+        await flowDynamic("🔧 Este flujo aún está en construcción.");
+        return;
 
-      case "🛠️ repuestos":
-        return gotoFlow(partsFlow);
+      case "repuestos":
+        await flowDynamic("🛠️ Este flujo aún está en construcción.");
+        return;
 
-      case "📅 consultar citas":
-        return gotoFlow(appointmentsFlow);
+      case "consultar_citas":
+        await flowDynamic("📅 Este flujo aún está en construcción.");
+        return;
 
-      case "💬 contactar asesor": {
-        const userState = state.getMyState();
-
-        // Creamos conversación con Chatwoot
-        await chatwoot.findOrCreateInbox({ name: "Chatbot" });
+      case "contactar_asesor":
         await chatwoot.checkAndSetCustomAttribute();
+
+        const inbox = await chatwoot.findOrCreateInbox({
+          name: "TecniRacer",
+        });
 
         const contact = await chatwoot.findOrCreateContact({
           from: ctx.from,
-          name: userState?.name || "Cliente",
-          inbox: "Chatbot",
+          name: ctx.pushName || "Cliente",
+          inbox: inbox.id,
         });
 
         const conversation = await chatwoot.findOrCreateConversation({
-          inbox_id: contact.inbox_id || contact.inbox?.id,
+          inbox_id: inbox.id,
           contact_id: contact.id,
           phone_number: ctx.from,
         });
 
         await chatwoot.createMessage({
-          msg: `📥 *Nuevo cliente solicita hablar con un asesor*\n\n📱 Número: +${ctx.from}\n👤 Nombre: ${userState?.name || "Desconocido"}`,
+          msg: "📩 El cliente ha solicitado hablar con un asesor desde el menú.",
           mode: "incoming",
           conversation_id: conversation.id,
-          attachment: [],
         });
 
-        await flowDynamic("✅ Te he conectado con un asesor. En breve te responderán.");
-
-        return;
-      }
+        return await flowDynamic(
+          "🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos."
+        );
 
       default:
-        return fallBack("⚠️ Por favor seleccioná una opción válida del menú.");
+        await flowDynamic("⚠️ Por favor seleccioná una opción válida del menú.");
     }
-  });
+  }
+);
 
 export { menuFlow };
