@@ -8,6 +8,7 @@ import { mainFlow } from "./mainFlow";
 import { menuFlow } from "./menuFlow";
 import { faqFlow } from "./faqFlow";
 import { fallbackFlow } from "./fallbackFlow";
+import { mechanicalFlow } from "./mechanicalFlow";
 
 export default createFlow([
   mainFlow,
