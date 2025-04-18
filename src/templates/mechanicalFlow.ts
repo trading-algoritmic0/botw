@@ -20,7 +20,7 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
           button: "Servicios",
           sections: [
             {
-              title: "Sede Principal - Calle 123 #45-67🔧",
+              title: "Sede Principal 🔧",
               rows: [
                 {
                   id: "cambioaceite",
