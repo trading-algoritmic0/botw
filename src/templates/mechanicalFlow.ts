@@ -61,5 +61,5 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
       // aquí podrías: return gotoFlow(appointmentsFlow);
       return;
     }
-  )
+  );
 export { mechanicalFlow };
