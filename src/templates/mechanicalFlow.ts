@@ -38,11 +38,6 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                   description: "Alineación profesional y balanceo"
                 },
                 {
-                  id: "revision_suspension",
-                  title: "Revisión de suspensión",
-                  description: "Inspección detallada de la suspensión"
-                },
-                {
                   id: "escaneo_testigo",
                   title: "Escaneo por testigo encendido",
                   description: "Diagnóstico con scanner automotriz"
