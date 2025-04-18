@@ -1,6 +1,7 @@
 import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
+import { ayBalanceo } from "./mechanical/ayBalanceo";
 
 const mechanicalFlow = addKeyword(["mecanica_general"])
   // 1) Primera parte: enviamos la lista
