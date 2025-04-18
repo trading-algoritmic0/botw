@@ -1,65 +1,60 @@
 import { addKeyword } from "@builderbot/bot";
-import { menuFlow } from "./menuFlow";
 
-const mechanicalFlow = addKeyword<Provider, Database>(['hola', 'Buenas', '.', 'Buenos', 'Hola'])
+const mechanicalFlow = addKeyword(['mecanica_general'])
   .addAnswer(
-    '👋 ¡Hola! Bienvenido a *Urban Electric Riohacha* 🏍️. Por favor selecciona una opción:',
+    '🔧 ¡Bienvenido al área de Mecánica General de *TecniRacer*!',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
         header: {
           type: "text",
-          text: "🏍️ Urban Electric Riohacha"
+          text: "🔧 Servicios disponibles"
         },
         body: {
-          text: "¿En qué podemos ayudarte hoy?"
+          text: "Seleccioná el servicio que necesitás 👇"
         },
         footer: {
-          text: "✅ Selecciona una opción"
+          text: "TecniRacer - Tu taller de confianza"
         },
         action: {
-          button: "Menú",
+          button: "📋 Ver servicios",
           sections: [
             {
-              title: "Vehículos 🚲 y Ubicación📍",
+              title: "Servicios en sede principal",
               rows: [
                 {
-                  id: "catalogo",
-                  title: "Catálogo de vehículos",
-                  description: "Ver catálogo de vehículos electricos"
+                  id: "cambio_aceite",
+                  title: "Cambio de aceite",
+                  description: "Servicio en nuestra sede principal"
                 },
                 {
-                  id: "puntos",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "revision_frenos",
+                  title: "Revisión de frenos",
+                  description: "Incluye inspección y ajuste"
                 }
               ]
             },
             {
-              title: "Servicio 🔧 y Pago 💳",
+              title: "Talleres aliados",
               rows: [
                 {
-                  id: "mantenimiento",
-                  title: "Mantenimiento/Garantía",
-                  description: "Agendar cita o soporte"
+                  id: "diagnostico_electronico",
+                  title: "Diagnóstico electrónico",
+                  description: "Taller aliado: ElectroCar"
                 },
                 {
-                  id: "pagos",
-                  title: "Métodos de pago",
-                  description: "Ver métodos de pago"
-                },
-                {
-                  id: "preguntas",
-                  title: "Tengo preguntas",
-                  description: "Contactar con asesor"
+                  id: "instalacion_sensores",
+                  title: "Instalación de sensores",
+                  description: "Taller aliado: SensorTech"
                 }
               ]
             }
           ]
         }
-      }
-      await provider.sendList(ctx.from, list)
+      };
+
+      await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
     }
-  )
+  );
 
 export { mechanicalFlow };
