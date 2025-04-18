@@ -24,7 +24,7 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                 {
                   id: "cambioaceite",
                   title: "Cambio de aceite",
-                  description: "Servicio realizado principal"
+                  description: "Servicio realizado en sede principal"
                 },
                 {
                   id: "revisionfrenos",
@@ -39,17 +39,12 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                 {
                   id: "scannerdiag",
                   title: "Diagnostico por scanner",
-                  description: "Diagnostico por scanner"
+                  description: "Diagnostico electrónico y scanner"
                 },
                 {
                   id: "fugasmotor",
-                  title: "Corrección fugas en motor",
-                  description: "Corrección fugas en motor"
-                },
-                {
-                  id: "preguntas2",
-                  title: "Tengo preguntas",
-                  description: "Contactar con asesor"
+                  title: "Corrección de fugas en motor",
+                  description: "Corrección de fugas en motor"
                 }
               ]
             },
@@ -73,6 +68,11 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                 },
                 {
                   id: "preguntas1",
+                  title: "Tengo preguntas",
+                  description: "Contactar con asesor"
+                },
+                {
+                  id: "preguntas2",
                   title: "Tengo preguntas",
                   description: "Contactar con asesor"
                 }
