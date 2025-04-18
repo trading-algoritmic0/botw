@@ -58,7 +58,7 @@ const mechanicalFlow = addKeyword(EVENTS.ACTION)
         }
       };
 
-      await provider.sendList(ctx.from, list);
+      await provider.sendLists(ctx.from, list);
     }
   )
   .addAnswer(
