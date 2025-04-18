@@ -1,5 +1,4 @@
 import { addKeyword } from "@builderbot/bot";
-
 const mechanicalFlow = addKeyword(['mecanica_general'])
  .addAnswer(
     'Por favor selecciona una opción:',
@@ -23,29 +22,29 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
               title: "Sede Principal 🔧",
               rows: [
                 {
-                  id: "cambioaceite",
+                  id: "cambio_aceite",
                   title: "Cambio de aceite",
                   description: "Servicio realizado en sede principal"
                 },
                 {
-                  id: "puntos",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "revision_frenos",
+                  title: "Revision de frenos",
+                  description: "Cambio de pastillas etc"
                 },
                 {
-                  id: "puntos1",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "sing_motor",
+                  title: "Sincronizacion de motor",
+                  description: "Servicio en sede principal"
                 },
                 {
-                  id: "puntos2",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "scanner_diag",
+                  title: "Diagnostico por scanner",
+                  description: "Diagnostico electrónico y scanner"
                 },
                 {
-                  id: "puntos3",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "fugasmotor",
+                  title: "Corrección de fugas en motor",
+                  description: "Corrección de fugas en motor"
                 }
               ]
             },
