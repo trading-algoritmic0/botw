@@ -66,6 +66,16 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                   id: "preguntas",
                   title: "Tengo preguntas",
                   description: "Contactar con asesor"
+                },
+                {
+                  id: "preguntas1",
+                  title: "Tengo preguntas",
+                  description: "Contactar con asesor"
+                },
+                {
+                  id: "preguntas2",
+                  title: "Tengo preguntas",
+                  description: "Contactar con asesor"
                 }
               ]
             }
