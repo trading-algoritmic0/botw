@@ -2,7 +2,7 @@ import { addKeyword } from "@builderbot/bot";
 import { mechanicalFlow2 } from "./mechanicalFlow2";
 
 const mechanicalFlow = addKeyword(['mecanica_general'])
- .addAnswer(
+  .addAnswer(
     'Por favor selecciona una opción:',
     { capture: false },
     async (ctx, { provider }) => {
@@ -83,10 +83,13 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
           ]
         }
       }
-      await provider.sendList(ctx.from, list)
+      await provider.sendList(ctx.from, list);
     }
   )
-.addAnswer('', { capture: true }, async (ctx, tools) => {
-  if (ctx?.id === 'DHH22') return gotoFlow(mechanicalFlow2)
-})
+  .addAnswer('', { capture: true }, async (ctx, { gotoFlow }) => {
+    if (ctx?.id === 'DHH22') {
+      return gotoFlow(mechanicalFlow2);
+    }
+  });
+
 export { mechanicalFlow };
