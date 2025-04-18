@@ -1,59 +1,74 @@
 import { addKeyword } from "@builderbot/bot";
+import { menuFlow } from "./menuFlow";
 import { mechanicalFlow2 } from "./mechanicalFlow2";
 
-const mechanicalFlow = addKeyword(["mecanica_general"])
+const mechanicalFlow = addKeyword(['mecanica_general'])
   .addAnswer(
-    'Por favor selecciona una opción:',
+    'Por favor selecciona un servicio:',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
-        header: { type: "text", text: "Servicio mecánico TecniRacer" },
-        body:   { text: "¿En qué podemos ayudarte hoy?" },
-        footer: { text: "✅ Selecciona una opción" },
+        header: {
+          type: "text",
+          text: "Servicio mecánico TecniRacer"
+        },
+        body: {
+          text: "¿En qué podemos ayudarte hoy?"
+        },
+        footer: {
+          text: "✅ Selecciona una opción"
+        },
         action: {
           button: "Servicios",
           sections: [
             {
               title: "Sede Principal 🔧",
               rows: [
-                { id: "PNDM98", title: "Cambio de aceite",             description: "En sede principal" },
-                { id: "PNDM97", title: "Revisión frenos",             description: "En sede principal" },
-                { id: "PNDM96", title: "Diagnóstico electrónico",     description: "En sede principal" },
-                { id: "PNDM95", title: "Revisión suspensión",         description: "En sede principal" },
-                { id: "PNDM94", title: "Sincronización",             description: "En sede principal" },
+                { id: "PNDM98", title: "Cambio de aceite",       description: "En sede principal" },
+                { id: "PNDM97", title: "Revisión de frenos",     description: "En sede principal" },
+                { id: "PNDM96", title: "Diagnóstico electrónico",description: "En sede principal" },
+                { id: "PNDM95", title: "Revisión suspensión",     description: "En sede principal" },
               ],
             },
             {
               title: "Talleres Aliados 🔧",
               rows: [
-                { id: "DHH18", title: "Alineación/balanceo",    description: "Taller ElectroCar" },
-                { id: "DHH19", title: "Latonería y pintura",     description: "Taller PaintPro" },
-                { id: "DHH20", title: "Tapicería y cojinería",    description: "Taller UpholsteryX" },
-                { id: "DHH21", title: "Accesorios y lujos",      description: "Taller LuxuryMods" },
-                { id: "DHH22", title: "Más Servicios",           description: "Ver más servicios disponibles" },
+                { id: "DHH18", title: "Alineación/balanceo",   description: "Tercerizado" },
+                { id: "DHH19", title: "Latonería y pintura",    description: "Tercerizado" },
+                { id: "DHH20", title: "Tapicería y cojinería",  description: "Tercerizado" },
+                { id: "DHH21", title: "Accesorios y lujos",    description: "Tercerizado" },
               ],
             },
-          ],
-        },
+            {
+              title: "Otras opciones 🔄",
+              rows: [
+                { id: "volver_menu", title: "Volver al menú", description: "" },
+                { id: "DHH22",      title: "…Más servicios", description: "Ver más opciones" },
+              ],
+            },
+          ]
+        }
       };
       await provider.sendList(ctx.from, list);
     }
   )
   .addAnswer(
-    "", 
-    { capture: true },
+    "", { capture: true },
     async (ctx, { flowDynamic, gotoFlow }) => {
-      const selection = ctx.body?.trim();
+      switch (ctx.id) {
+        case "volver_menu":
+          return gotoFlow(menuFlow);
 
-      // **Redirijo** si pulsa "Más Servicios"
-      if (selection === "DHH22") {
-        return gotoFlow(mechanicalFlow2);
+        case "DHH22":
+          return gotoFlow(mechanicalFlow2);
+
+        default:
+          // flujo de cita
+          await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
+          await flowDynamic("¿Deseas agendar una cita para este servicio?");
+          // aquí podrías saltar a appointmentsFlow o lo que necesites…
+          return gotoFlow(menuFlow);
       }
-
-      // Cualquier otra opción válida:
-      await flowDynamic(`✅ Has seleccionado *${selection}*`);
-      await flowDynamic("¿Deseás agendar una cita para este servicio?");
-      await flowDynamic("📆 Responde *sí* para continuar o *no* para volver al menú.");
     }
   );
 
