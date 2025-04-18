@@ -42,7 +42,7 @@ const menuFlow = addKeyword(EVENTS.ACTION)
       },
     };
 
-    await provider.sendList(${ctx.from}@s.whatsapp.net, list);
+    await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
   })
   .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
     const option = ctx?.id || ctx?.body?.toLowerCase().replace(/ /g, "_");
