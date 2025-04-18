@@ -52,26 +52,24 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
       await provider.sendList(ctx.from, list);
     }
   )
-  // 2️⃣ Captura de la selección y navegación
   .addAnswer(
-    "",
-    { capture: true },
+    "", { capture: true },
     async (ctx, { flowDynamic, gotoFlow }) => {
-      const selection = ctx.id;
+      switch (ctx.id) {
+        case "volver_menu":
+          return gotoFlow(menuFlow);
 
-      if (selection === "volver_menu") {
-        return gotoFlow(menuFlow);
+        case "DHH22":
+          return gotoFlow(mechanicalFlow2);
+
+        default:
+          // flujo de cita
+          await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
+          await flowDynamic("¿Deseas agendar una cita para este servicio?");
+          // aquí podrías saltar a appointmentsFlow o lo que necesites…
+          return gotoFlow(menuFlow);
       }
-
-      if (selection === "DHH22") {
-        return gotoFlow(mechanicalFlow2);
-      }
-
-      // Cualquier otro servicio:
-      await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
-      await flowDynamic("¿Deseas agendar una cita para este servicio?");
-      // Aquí podrías redirigir a appointmentsFlow o volver al menú:
-      return gotoFlow(menuFlow);
     }
   );
+
 export { mechanicalFlow };
