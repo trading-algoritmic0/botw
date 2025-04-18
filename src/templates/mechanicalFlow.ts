@@ -1,88 +1,90 @@
 import { addKeyword } from "@builderbot/bot";
 
 const mechanicalFlow = addKeyword(['mecanica_general'])
- .addAnswer(
-    '🔧 ¡Hola! Bienvenido a *TecniRacer* 🚗. Por favor selecciona un servicio de mecánica general:',
+  .addAnswer(
+    'Hola, bienvenido a TecniRacer. Por favor selecciona un servicio de mecánica general:',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
         header: {
           type: "text",
-          text: "🔧 Mecánica General - TecniRacer"
+          text: "Servicios de Mecánica General"
         },
         body: {
-          text: "¿Con qué servicio podemos ayudarte hoy?"
+          text: "Selecciona un servicio disponible"
         },
         footer: {
-          text: "✅ Seleccioná una opción para continuar"
+          text: "TecniRacer"
         },
         action: {
           button: "Ver servicios",
           sections: [
             {
-              title: "Sede Principal - Calle 123 #45-67",
+              title: "Servicios en sede principal",
               rows: [
                 {
                   id: "cambio_aceite",
                   title: "Cambio de aceite",
-                  description: "Servicio realizado en sede principal"
+                  description: "Servicio en sede principal"
                 },
                 {
                   id: "revision_frenos",
                   title: "Revisión de frenos",
-                  description: "Chequeo completo del sistema de frenos"
+                  description: "Servicio en sede principal"
                 },
                 {
                   id: "alineacion_balanceo",
                   title: "Alineación y balanceo",
-                  description: "Alineación profesional y balanceo"
+                  description: "Servicio en sede principal"
                 },
                 {
                   id: "revision_suspension",
                   title: "Revisión de suspensión",
-                  description: "Inspección detallada de la suspensión"
+                  description: "Servicio en sede principal"
                 },
                 {
                   id: "escaneo_testigo",
-                  title: "Escaneo por testigo encendido",
-                  description: "Diagnóstico con scanner automotriz"
+                  title: "Escaneo testigo encendido",
+                  description: "Servicio en sede principal"
                 }
               ]
             },
             {
-              title: "Talleres Aliados",
+              title: "Servicios tercerizados",
               rows: [
                 {
                   id: "diagnostico_electronico",
                   title: "Diagnóstico electrónico",
-                  description: "Taller ElectroCar"
+                  description: "Taller aliado"
                 },
                 {
                   id: "sincronizacion_motor",
                   title: "Sincronización de motor",
-                  description: "Taller SyncMotor"
+                  description: "Taller aliado"
                 },
                 {
                   id: "revision_caja",
                   title: "Revisión de caja automática",
-                  description: "Taller TransTec"
+                  description: "Taller aliado"
                 },
                 {
                   id: "instalacion_sensores",
                   title: "Instalación de sensores",
-                  description: "Taller SensorTech"
+                  description: "Taller aliado"
                 },
                 {
                   id: "otro_servicio",
-                  title: "Otro servicio / Consultar asesor",
-                  description: "Taller Asistencia"
+                  title: "Otro servicio",
+                  description: "Consultar asesor"
                 }
               ]
             }
           ]
         }
       }
+
       await provider.sendList(ctx.from, list)
     }
   )
-export { mechanicalFlow };
+
+export { mechanicalFlow }
