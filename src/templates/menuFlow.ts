@@ -36,6 +36,11 @@ const menuFlow = addKeyword(EVENTS.ACTION)
                 title: "💬 Contactar Asesor",
                 description: "Hablar con una persona del equipo",
               },
+              {
+                id: "porsiacaso",
+                title: "💬 Funcion adicional",
+                description: "Hablar con una persona del equipo",
+              },
             ],
           },
         ],
