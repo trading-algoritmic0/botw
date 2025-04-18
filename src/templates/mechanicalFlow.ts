@@ -1,90 +1,63 @@
 import { addKeyword } from "@builderbot/bot";
 
 const mechanicalFlow = addKeyword(['mecanica_general'])
-  .addAnswer(
-    'Hola, bienvenido a TecniRacer. Por favor selecciona un servicio de mecánica general:',
+ .addAnswer(
+    '👋 ¡Hola! Bienvenido a *Urban Electric Riohacha* 🏍️. Por favor selecciona una opción:',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
         header: {
           type: "text",
-          text: "Servicios de Mecánica General"
+          text: "🏍️ Urban Electric Riohacha"
         },
         body: {
-          text: "Selecciona un servicio disponible"
+          text: "¿En qué podemos ayudarte hoy?"
         },
         footer: {
-          text: "TecniRacer"
+          text: "✅ Selecciona una opción"
         },
         action: {
-          button: "Ver servicios",
+          button: "Menú",
           sections: [
             {
-              title: "Servicios en sede principal",
+              title: "Vehículos 🚲 y Ubicación📍",
               rows: [
                 {
-                  id: "cambio_aceite",
-                  title: "Cambio de aceite",
-                  description: "Servicio en sede principal"
+                  id: "catalogo",
+                  title: "Catálogo de vehículos",
+                  description: "Ver catálogo de vehículos electricos"
                 },
                 {
-                  id: "revision_frenos",
-                  title: "Revisión de frenos",
-                  description: "Servicio en sede principal"
-                },
-                {
-                  id: "alineacion_balanceo",
-                  title: "Alineación y balanceo",
-                  description: "Servicio en sede principal"
-                },
-                {
-                  id: "revision_suspension",
-                  title: "Revisión de suspensión",
-                  description: "Servicio en sede principal"
-                },
-                {
-                  id: "escaneo_testigo",
-                  title: "Escaneo testigo encendido",
-                  description: "Servicio en sede principal"
+                  id: "puntos",
+                  title: "Puntos de venta",
+                  description: "Ubicación y horarios"
                 }
               ]
             },
             {
-              title: "Servicios tercerizados",
+              title: "Servicio 🔧 y Pago 💳",
               rows: [
                 {
-                  id: "diagnostico_electronico",
-                  title: "Diagnóstico electrónico",
-                  description: "Taller aliado"
+                  id: "mantenimiento",
+                  title: "Mantenimiento/Garantía",
+                  description: "Agendar cita o soporte"
                 },
                 {
-                  id: "sincronizacion_motor",
-                  title: "Sincronización de motor",
-                  description: "Taller aliado"
+                  id: "pagos",
+                  title: "Métodos de pago",
+                  description: "Ver métodos de pago"
                 },
                 {
-                  id: "revision_caja",
-                  title: "Revisión de caja automática",
-                  description: "Taller aliado"
-                },
-                {
-                  id: "instalacion_sensores",
-                  title: "Instalación de sensores",
-                  description: "Taller aliado"
-                },
-                {
-                  id: "otro_servicio",
-                  title: "Otro servicio",
-                  description: "Consultar asesor"
+                  id: "preguntas",
+                  title: "Tengo preguntas",
+                  description: "Contactar con asesor"
                 }
               ]
             }
           ]
         }
       }
-
       await provider.sendList(ctx.from, list)
     }
   )
-
-export { mechanicalFlow }
+export { mechanicalFlow };
