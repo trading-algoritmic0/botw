@@ -22,22 +22,22 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
               title: "Sede Principal 🔧",
               rows: [
                 {
-                  id: "cambio_aceite",
+                  id: "cambioaceite",
                   title: "Cambio de aceite",
                   description: "Servicio realizado principal"
                 },
                 {
-                  id: "revision_frenos",
+                  id: "revisionfrenos",
                   title: "Revision de frenos",
                   description: "Cambio de pastillas etc"
                 },
                 {
-                  id: "sing_motor",
+                  id: "singmotor",
                   title: "Sincronizacion de motor",
                   description: "Servicio en sede principal"
                 },
                 {
-                  id: "scanner_diag",
+                  id: "scannerdiag",
                   title: "Diagnostico por scanner",
                   description: "Diagnostico por scanner"
                 },
