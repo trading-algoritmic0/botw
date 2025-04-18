@@ -1,104 +1,113 @@
-import { addKeyword, EVENTS } from "@builderbot/bot";
+import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
-import { appointmentsFlow } from "./appointmentsFlow";
 
 const services = [
-  { id: "cambio_aceite", title: "Cambio de aceite", type: "sede" },
-  { id: "revision_frenos", title: "Revisión de frenos", type: "sede" },
-  { id: "alineacion_balanceo", title: "Alineación y balanceo", type: "sede" },
-  { id: "revision_suspension", title: "Revisión de suspensión", type: "sede" },
-  { id: "escaneo_testigo", title: "Escaneo por testigo encendido", type: "sede" },
-  { id: "diagnostico_electronico", title: "Diagnóstico electrónico", type: "aliado" },
-  { id: "sincronizacion_motor", title: "Sincronización de motor", type: "aliado" },
-  { id: "revision_caja", title: "Revisión de caja automática", type: "aliado" },
-  { id: "instalacion_sensores", title: "Instalación de sensores", type: "aliado" },
-  { id: "otro_servicio", title: "Otro servicio / Consultar asesor", type: "aliado" },
+  {
+    id: "cambio_aceite",
+    title: "Cambio de aceite",
+    description: "Sede Principal - Calle 123 #45-67",
+  },
+  {
+    id: "revision_frenos",
+    title: "Revisión de frenos",
+    description: "Sede Principal - Calle 123 #45-67",
+  },
+  {
+    id: "alineacion_balanceo",
+    title: "Alineación y balanceo",
+    description: "Sede Principal - Calle 123 #45-67",
+  },
+  {
+    id: "revision_suspension",
+    title: "Revisión de suspensión",
+    description: "Sede Principal - Calle 123 #45-67",
+  },
+  {
+    id: "escaneo_testigo",
+    title: "Escaneo por testigo encendido",
+    description: "Sede Principal - Calle 123 #45-67",
+  },
+  {
+    id: "diagnostico_electronico",
+    title: "Diagnóstico electrónico",
+    description: "Taller ElectroCar – Cra. 10 #20-33",
+  },
+  {
+    id: "sincronizacion_motor",
+    title: "Sincronización de motor",
+    description: "Taller SyncMotor – Av. Las Vegas #54-12",
+  },
+  {
+    id: "revision_caja",
+    title: "Revisión de caja automática",
+    description: "Taller TransTec – Cra. 45 #17A – 06",
+  },
+  {
+    id: "instalacion_sensores",
+    title: "Instalación de sensores",
+    description: "Taller SensorTech – Calle 80 #22-45",
+  },
+  {
+    id: "otro_servicio",
+    title: "Otro servicio / Consultar asesor",
+    description: "Taller Asistencia – Flexible",
+  },
 ];
 
-const mechanicalFlow = addKeyword(EVENTS.ACTION)
-  .addAnswer(
-    "🔧 Servicios de Mecánica General",
-    { capture: true },
-    async (ctx, { provider, flowDynamic }) => {
-      const list = {
-        header: {
-          type: "text",
-          text: "Taller Mecánico Automotriz"
-        },
-        body: {
-          text: "Selecciona un servicio:"
-        },
-        footer: {
-          text: "Horario de atención: L-V 8am a 6pm"
-        },
-        action: {
-          button: "Ver servicios disponibles",
-          sections: [
-            {
-              title: "🏭 Servicios en Sede",
-              rows: services
-                .filter(s => s.type === "sede")
-                .map(s => ({
-                  id: s.id,
-                  title: s.title,
-                  description: "Realizado en nuestras instalaciones"
-                }))
-            },
-            {
-              title: "🤝 Servicios Tercerizados",
-              rows: services
-                .filter(s => s.type === "aliado")
-                .map(s => ({
-                  id: s.id,
-                  title: s.title,
-                  description: "Realizado con aliados certificados"
-                }))
-            }
-          ]
-        }
-      };
+const mechanicalFlow = addKeyword("mecanica_general")
+  .addAction(async (ctx, { provider }) => {
+    const list = {
+      header: {
+        type: "text",
+        text: "🔧 Servicios de Mecánica General",
+      },
+      body: {
+        text: "Seleccioná el servicio que necesitás 👇",
+      },
+      footer: {
+        text: "TecniRacer - Taller confiable",
+      },
+      action: {
+        button: "📋 Ver servicios",
+        sections: [
+          {
+            title: "📍 Sede Principal - Calle 123 #45-67",
+            rows: services
+              .filter((s) => s.description.includes("Sede Principal"))
+              .map((s) => ({
+                id: s.id,
+                title: s.title,
+                description: s.description,
+              })),
+          },
+          {
+            title: "🏬 Talleres Aliados",
+            rows: services
+              .filter((s) => s.description.includes("Taller"))
+              .map((s) => ({
+                id: s.id,
+                title: s.title,
+                description: s.description,
+              })),
+          },
+        ],
+      },
+    };
 
-      await provider.sendLists(ctx.from, list);
+    await provider.sendLists(ctx.from, list); // ✅ Método correcto con provider Meta
+  })
+  .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    const selected = services.find((s) => s.id === ctx.id);
+    if (!selected) {
+      await flowDynamic("❌ Opción no válida. Por favor, seleccioná un servicio del menú.");
+      return gotoFlow(mechanicalFlow);
     }
-  )
-  .addAnswer(
-    "¿Listo para seleccionar un servicio?",
-    { capture: true }, 
-    async (ctx, { flowDynamic, gotoFlow }) => {
-      const selectedService = services.find(s => s.id === ctx.body);
-      
-      if (!selectedService) {
-        await flowDynamic("⚠️ Opción no reconocida, por favor selecciona una opción válida");
-        return gotoFlow(mechanicalFlow);
-      }
 
-      await flowDynamic(`✅ Elegiste: *${selectedService.title}*`);
-      await flowDynamic([
-        "¿Deseas agendar una cita ahora?",
-        "Escribe *si* para continuar o *no* para volver al menú"
-      ].join('\n'));
+    await flowDynamic(`✅ Has seleccionado: *${selected.title}*`);
+    await flowDynamic("¿Deseás agendar una cita para este servicio?");
+    await flowDynamic("📆 Responde con *sí* para continuar o *no* para volver al menú.");
 
-      return addKeyword(EVENTS.ACTION)
-        .addAnswer(
-          { capture: true },
-          async (ctx, { flowDynamic, gotoFlow }) => {
-            const response = ctx.body.toLowerCase();
-            
-            if (response === 'si') {
-              await flowDynamic("🚀 Perfecto, vamos a agendar tu cita...");
-              return gotoFlow(appointmentsFlow);
-            }
-            
-            if (response === 'no') {
-              await flowDynamic("🔙 Regresando al menú principal...");
-              return gotoFlow(menuFlow);
-            }
-            
-            await flowDynamic("❌ Respuesta no válida");
-            return gotoFlow(mechanicalFlow);
-          }
-        );
-    }
-  );
+    return gotoFlow(menuFlow); // Luego se conectará a appointmentsFlow
+  });
 
 export { mechanicalFlow };
