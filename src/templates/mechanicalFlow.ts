@@ -94,9 +94,9 @@ const mechanicalFlow = addKeyword("mecanica_general")
       },
     };
 
-    await provider.sendLists(ctx.from, list); // ✅ Método correcto con provider Meta
+    await provider.sendList(ctx.from, list); // ✅ Método correcto con provider Meta
   })
-  .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+  .addAnswer("", { capture: false }, async (ctx, { flowDynamic, gotoFlow }) => {
     const selected = services.find((s) => s.id === ctx.id);
     if (!selected) {
       await flowDynamic("❌ Opción no válida. Por favor, seleccioná un servicio del menú.");
