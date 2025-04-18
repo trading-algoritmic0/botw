@@ -2,55 +2,80 @@ import { addKeyword } from "@builderbot/bot";
 
 const mechanicalFlow = addKeyword(['mecanica_general'])
  .addAnswer(
-    '👋 ¡Hola! Bienvenido a *Urban Electric Riohacha* 🏍️. Por favor selecciona una opción:',
+    '🔧 ¡Hola! Bienvenido a *TecniRacer* 🚗. Por favor selecciona un servicio de mecánica general:',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
         header: {
           type: "text",
-          text: "🏍️ Urban Electric Riohacha"
+          text: "🔧 Mecánica General - TecniRacer"
         },
         body: {
-          text: "¿En qué podemos ayudarte hoy?"
+          text: "¿Con qué servicio podemos ayudarte hoy?"
         },
         footer: {
-          text: "✅ Selecciona una opción"
+          text: "✅ Seleccioná una opción para continuar"
         },
         action: {
-          button: "Menú",
+          button: "Ver servicios",
           sections: [
             {
-              title: "Vehículos 🚲 y Ubicación📍",
+              title: "Sede Principal - Calle 123 #45-67",
               rows: [
                 {
-                  id: "catalogo",
-                  title: "Catálogo de vehículos",
-                  description: "Ver catálogo de vehículos electricos"
+                  id: "cambio_aceite",
+                  title: "Cambio de aceite",
+                  description: "Servicio realizado en sede principal"
                 },
                 {
-                  id: "puntos",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "revision_frenos",
+                  title: "Revisión de frenos",
+                  description: "Chequeo completo del sistema de frenos"
+                },
+                {
+                  id: "alineacion_balanceo",
+                  title: "Alineación y balanceo",
+                  description: "Alineación profesional y balanceo"
+                },
+                {
+                  id: "revision_suspension",
+                  title: "Revisión de suspensión",
+                  description: "Inspección detallada de la suspensión"
+                },
+                {
+                  id: "escaneo_testigo",
+                  title: "Escaneo por testigo encendido",
+                  description: "Diagnóstico con scanner automotriz"
                 }
               ]
             },
             {
-              title: "Servicio 🔧 y Pago 💳",
+              title: "Talleres Aliados",
               rows: [
                 {
-                  id: "mantenimiento",
-                  title: "Mantenimiento/Garantía",
-                  description: "Agendar cita o soporte"
+                  id: "diagnostico_electronico",
+                  title: "Diagnóstico electrónico",
+                  description: "Taller ElectroCar"
                 },
                 {
-                  id: "pagos",
-                  title: "Métodos de pago",
-                  description: "Ver métodos de pago"
+                  id: "sincronizacion_motor",
+                  title: "Sincronización de motor",
+                  description: "Taller SyncMotor"
                 },
                 {
-                  id: "preguntas",
-                  title: "Tengo preguntas",
-                  description: "Contactar con asesor"
+                  id: "revision_caja",
+                  title: "Revisión de caja automática",
+                  description: "Taller TransTec"
+                },
+                {
+                  id: "instalacion_sensores",
+                  title: "Instalación de sensores",
+                  description: "Taller SensorTech"
+                },
+                {
+                  id: "otro_servicio",
+                  title: "Otro servicio / Consultar asesor",
+                  description: "Taller Asistencia"
                 }
               ]
             }
