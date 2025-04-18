@@ -86,15 +86,7 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
       await provider.sendList(ctx.from, list)
     }
   )
-  .addAnswer('', { capture: true }, async (ctx, { gotoFlow }) => {
-    const userResponse = ctx?.body?.toLowerCase()?.trim();
-
-    // 🔁 Si el usuario seleccionó "Más Servicios", redirigimos al siguiente flujo
-    if (userResponse === 'más servicios' || userResponse === 'mas servicios') {
-      return gotoFlow(mechanicalFlow2);
-    }
-
-    // 🔒 Si no seleccionó eso, por ahora no hacemos nada especial
-    return;
-  });
+.addAnswer('', { capture: true }, async (ctx, tools) => {
+  if (ctx?.id === 'DHH22') return gotoFlow(mechanicalFlow2)
+})
 export { mechanicalFlow };
