@@ -9,10 +9,10 @@ const mechanicalFlow2 = addKeyword(["mecanica_general2"])
       const list = {
         header: {
           type: "text",
-          text: "Servicio mecánico TecniRacer"
+          text: "Servicio mecánico TecniRacer 2"
         },
         body: {
-          text: "¿En qué podemos ayudarte hoy?"
+          text: "MENU 2"
         },
         footer: {
           text: "✅ Selecciona una opción"
@@ -24,27 +24,22 @@ const mechanicalFlow2 = addKeyword(["mecanica_general2"])
               title: "Sede Principal 🔧",
               rows: [
                 {
-                  id: "PNDM98",
+                  id: "PNDM9",
                   title: "Cambio de aceite",
                   description: "Servicio realizado en sede principal"
                 },
                 {
-                  id: "PNDM97",
+                  id: "PNDM8",
                   title: "Revision Frenos",
                   description: "Revision de Frenos"
                 },
                 {
-                  id: "PNDM96",
-                  title: "Diagnostico Electronico",
-                  description: "Scanner electronico"
-                },
-                {
-                  id: "PNDM95",
+                  id: "PNDM7",
                   title: "Revision Suspencion",
                   description: "Revision de Suspencion"
                 },
                 {
-                  id: "PNDM94",
+                  id: "PNDM6",
                   title: "Sincronizacion",
                   description: "Sincronizacion de motor"
                 }
@@ -59,11 +54,6 @@ const mechanicalFlow2 = addKeyword(["mecanica_general2"])
                   description: "Alineacion y balanceo"
                 },
                 {
-                  id: "ZDDY3",
-                  title: "Latoneria y pintura",
-                  description: "Ver métodos de pago"
-                },
-                {
                   id: "ZDDY2",
                   title: "Tapiceria y cojineria",
                   description: "Tapicería y cojineria"
@@ -75,8 +65,8 @@ const mechanicalFlow2 = addKeyword(["mecanica_general2"])
                 },
                 {
                   id: "VOLVER1",
-                  title: "Mas Servicios",
-                  description: "Contactar con asesor"
+                  title: "VOLVER",
+                  description: "REGRESAR"
                 }
               ]
             }
