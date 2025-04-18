@@ -1,5 +1,5 @@
 import { addKeyword } from "@builderbot/bot";
-import { mechanicalFlow } from "./mechanicalFlow"; // o la ruta que corresponda
+import { mechanicalFlow } from "../mechanicalFlow"; // o la ruta que corresponda
 
 const ayBalanceo = addKeyword(["DHH18"]).addAnswer(
   "", // no se necesita texto aquí
