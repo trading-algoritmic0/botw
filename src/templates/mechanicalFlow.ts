@@ -20,25 +20,25 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
           button: "Servicios",
           sections: [
             {
-              title: "Sede Principal - Calle 123 #45-67 🔧",
+              title: "Sede Principal - Calle 123 #45-67🔧",
               rows: [
                 {
-                  id: "cambio_aceite",
+                  id: "cambioaceite",
                   title: "Cambio de aceite",
                   description: "Servicio realizado en sede principal"
                 },
                 {
-                  id: "revision_frenos",
+                  id: "revisionfrenos",
                   title: "Revisión de frenos",
                   description: "Chequeo completo del sistema de frenos"
                 },
                 {
-                  id: "alineacion_balanceo",
+                  id: "alineacionbalanceo",
                   title: "Alineación y balanceo",
                   description: "Alineación profesional y balanceo"
                 },
                 {
-                  id: "escaneo_testigo",
+                  id: "escaneotestigo",
                   title: "Escaneo por testigo encendido",
                   description: "Diagnóstico con scanner automotriz"
                 }
