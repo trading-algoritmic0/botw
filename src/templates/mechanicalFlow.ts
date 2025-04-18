@@ -3,60 +3,60 @@ import { menuFlow } from "./menuFlow";
 
 const mechanicalFlow = addKeyword('mecanica_general')
     .addAnswer(
-        'Aqui va un mensaje',
+        '🔧 ¿Con qué servicio de mecánica general podemos ayudarte?',
         {
-            capture: true
+            capture: false
         },
         async (ctx, {provider}) => {
             const list = {
                 "header": {
                     "type": "text",
-                    "text": "<HEADER_TEXT>"
+                    "text": "Servicios de Mecánica General"
                 },
                 "body": {
-                    "text": "<BODY_TEXT>"
+                    "text": "Seleccioná uno de los siguientes servicios disponibles 👇"
                 },
                 "footer": {
-                    "text": "<FOOTER_TEXT>"
+                    "text": "TecniRacer - Taller confiable"
                 },
                 "action": {
-                    "button": "<BUTTON_TEXT>",
+                    "button": "📋 Ver servicios",
                     "sections": [
                         {
-                            "title": "<LIST_SECTION_1_TITLE>",
+                            "title": "Sede Principal",
                             "rows": [
                                 {
-                                    "id": "<LIST_SECTION_1_ROW_1_ID>",
-                                    "title": "<SECTION_1_ROW_1_TITLE>",
-                                    "description": "<SECTION_1_ROW_1_DESC>"
+                                    "id": "cambio_aceite",
+                                    "title": "Cambio de aceite",
+                                    "description": "Realizado en sede principal"
                                 },
                                 {
-                                    "id": "<LIST_SECTION_1_ROW_2_ID>",
-                                    "title": "<SECTION_1_ROW_2_TITLE>",
-                                    "description": "<SECTION_1_ROW_2_DESC>"
+                                    "id": "revision_frenos",
+                                    "title": "Revisión de frenos",
+                                    "description": "Realizado en sede principal"
                                 }
                             ]
                         },
                         {
-                            "title": "<LIST_SECTION_2_TITLE>",
+                            "title": "Talleres Aliados",
                             "rows": [
                                 {
-                                    "id": "<LIST_SECTION_2_ROW_1_ID>",
-                                    "title": "<SECTION_2_ROW_1_TITLE>",
-                                    "description": "<SECTION_2_ROW_1_DESC>"
+                                    "id": "revision_caja",
+                                    "title": "Revisión de caja automática",
+                                    "description": "Taller TransTec"
                                 },
                                 {
-                                    "id": "<LIST_SECTION_2_ROW_2_ID>",
-                                    "title": "<SECTION_2_ROW_2_TITLE>",
-                                    "description": "<SECTION_2_ROW_2_DESC>"
+                                    "id": "otro_servicio",
+                                    "title": "Otro servicio / Consultar asesor",
+                                    "description": "Taller Asistencia"
                                 }
                             ]
                         }
                     ]
                 }
-            }
-            await provider.sendLists(ctx.from, list)
+            };
+            await provider.sendList(ctx.from, list)
         }
-    )
+    );
 
 export { mechanicalFlow };
