@@ -2,31 +2,88 @@ import { addKeyword } from "@builderbot/bot";
 import { mechanicalFlow } from "./mechanicalFlow";
 
 const mechanicalFlow2 = addKeyword(["mecanica_general2"])
-  .addAnswer(
-    "Aquí tienes más servicios:",
+ .addAnswer(
+    'Por favor selecciona una opción:',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
-        header: { type: "text", text: "Más Servicios TecniRacer" },
-        body:   { text: "Selecciona uno de los nuevos servicios 👇" },
-        footer: { text: "🔙 Volver al menú de mecánica" },
+        header: {
+          type: "text",
+          text: "Servicio mecánico TecniRacer"
+        },
+        body: {
+          text: "¿En qué podemos ayudarte hoy?"
+        },
+        footer: {
+          text: "✅ Selecciona una opción"
+        },
         action: {
-          button: "Más Servicios",
+          button: "Servicios",
           sections: [
             {
-              title: "Servicios Extra 🔩",
+              title: "Sede Principal 🔧",
               rows: [
-                { id: "ZXXY15", title: "Revisión frenos hidráulicos",      description: "Taller BrakeMaster" },
-                { id: "ZXXY14", title: "Pulido de carrocería",             description: "Taller PolishPros" },
-                { id: "ZXXY13", title: "Instalación de turbo",             description: "Taller TurboBoost" },
-                { id: "ZXXY12", title: "Revisión de aire acondicionado",    description: "Taller CoolAir" },
-                { id: "VOLVER", title: "🔙 Volver al menú principal",        description: "Regresar a mecánica general" },
-              ],
+                {
+                  id: "PNDM98",
+                  title: "Cambio de aceite",
+                  description: "Servicio realizado en sede principal"
+                },
+                {
+                  id: "PNDM97",
+                  title: "Revision Frenos",
+                  description: "Revision de Frenos"
+                },
+                {
+                  id: "PNDM96",
+                  title: "Diagnostico Electronico",
+                  description: "Scanner electronico"
+                },
+                {
+                  id: "PNDM95",
+                  title: "Revision Suspencion",
+                  description: "Revision de Suspencion"
+                },
+                {
+                  id: "PNDM94",
+                  title: "Sincronizacion",
+                  description: "Sincronizacion de motor"
+                }
+              ]
             },
-          ],
-        },
-      };
-      await provider.sendList(ctx.from, list);
+            {
+              title: "Talleres Aliados 🔧",
+              rows: [
+                {
+                  id: "ZDDY4",
+                  title: "Alineacion/balanceo",
+                  description: "Alineacion y balanceo"
+                },
+                {
+                  id: "ZDDY3",
+                  title: "Latoneria y pintura",
+                  description: "Ver métodos de pago"
+                },
+                {
+                  id: "ZDDY2",
+                  title: "Tapiceria y cojineria",
+                  description: "Tapicería y cojineria"
+                },
+                {
+                  id: "ZDDY1",
+                  title: "Accesorios y lujos",
+                  description: "Accesorios y lujos"
+                },
+                {
+                  id: "VOLVER1",
+                  title: "Mas Servicios",
+                  description: "Contactar con asesor"
+                }
+              ]
+            }
+          ]
+        }
+      }
+      await provider.sendList(ctx.from, list)
     }
   )
   .addAnswer(
@@ -36,7 +93,7 @@ const mechanicalFlow2 = addKeyword(["mecanica_general2"])
       const sel = ctx.body?.trim();
 
       // Si pulsa “Volver” regreso al primer flujo
-      if (sel === "VOLVER") {
+      if (sel === "VOLVER1") {
         return gotoFlow(mechanicalFlow);
       }
 
