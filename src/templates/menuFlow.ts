@@ -1,127 +1,73 @@
-import { addKeyword, EVENTS } from "@builderbot/bot";
-import { chatwoot } from "../app";
-import { mechanicalFlow } from "./mechanicalFlow";
-import { partsFlow } from "./partsFlow";
-import { appointmentsFlow } from "./appointmentsFlow";
-// Si luego creas otro flow, solo importa aquí:
-// import { customFlow } from "./customFlow";
+import { addKeyword } from "@builderbot/bot";
+import { menuFlow } from "./menuFlow";
 
-const menuFlow = addKeyword(EVENTS.ACTION)
-  .addAction(async (ctx, { provider }) => {
-    const list = {
-      header: { type: "text", text: "Menú de Opciones" },
-      body: { text: "Seleccioná lo que necesitás 👇\n\nTecniRacer 💠" },
-      footer: { text: "" },
-      action: {
-        button: "📋 Ver opciones",
-        sections: [
-          {
-            title: "Opciones disponibles",
-            rows: [
-              {
-                id: "mecanica_general",
-                title: "🔧 Mecánica General",
-                description: "Servicios y mantenimiento",
-              },
-              {
-                id: "repuestos",
-                title: "🛠️ Repuestos",
-                description: "Pedir repuestos o consultar stock",
-              },
-              {
-                id: "consultar_citas",
-                title: "📅 Consultar Citas",
-                description: "Ver tus citas agendadas",
-              },
-              {
-                id: "contactar_asesor",
-                title: "💬 Contactar Asesor",
-                description: "Hablar con una persona del equipo",
-              },
-              {
-                id: "porsiacaso",
-                title: "✨ Función adicional",
-                description: "Ejecutar flujo extra",
-              },
-            ],
-          },
-        ],
-      },
-    };
-
-    // Enviar lista interactiva
-    await provider.sendList(`${ctx.from}@s.whatsapp.net`, list);
-  })
+const mechanicalFlow = addKeyword(['mecanica_general'])
   .addAnswer(
-    "",
-    { capture: true },
-    async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
-      const option = ctx.id || ctx.body?.toLowerCase().replace(/ /g, "_");
-
-      switch (option) {
-        case "mecanica_general":
-          // redirige a mechanicalFlow
-          return gotoFlow(mechanicalFlow);
-
-        case "repuestos":
-          // redirige a partsFlow
-          return gotoFlow(partsFlow);
-
-        case "consultar_citas":
-          // redirige a appointmentsFlow
-          return gotoFlow(appointmentsFlow);
-
-        case "contactar_asesor":
-          // lógica Chatwoot para contacto humano
-          const inbox = await chatwoot.findOrCreateInbox({ name: "Chatbot" });
-          await chatwoot.checkAndSetCustomAttribute();
-          const contact = await chatwoot.findOrCreateContact({
-            from: ctx.from,
-            name: ctx.pushName || "Cliente",
-            inbox: inbox.id,
-          });
-          const openConversation = await chatwoot.getOpenConversation({
-            contact_id: contact.id,
-            inbox_id: inbox.id,
-          });
-          if (openConversation) {
-            await chatwoot.createMessage({
-              msg: "📩 El cliente ha vuelto a solicitar hablar con un asesor desde el menú.",
-              mode: "incoming",
-              conversation_id: openConversation.id,
-              attachment: [],
-            });
-          } else {
-            const newConversation = await chatwoot.findOrCreateConversation({
-              inbox_id: inbox.id,
-              contact_id: contact.id,
-              phone_number: ctx.from,
-            });
-            if (newConversation && "id" in newConversation) {
-              await chatwoot.createMessage({
-                msg: "📩 El cliente ha solicitado hablar con un asesor desde el menú.",
-                mode: "incoming",
-                conversation_id: newConversation.id,
-                attachment: [],
-              });
-            }
-          }
-          await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-          return endFlow();
-
-        case "porsiacaso":
-          // flujo extra o respuesta directa
-          await flowDynamic("🚀 Has ejecutado la función adicional. ¿En qué más te puedo ayudar?");
-          // podrías redirigir a otro flow:
-          // return gotoFlow(customFlow);
+    'Por favor selecciona un servicio:',
+    { capture: false },
+    async (ctx, { provider }) => {
+      const list = {
+        header: {
+          type: "text",
+          text: "Servicio mecánico TecniRacer"
+        },
+        body: {
+          text: "¿En qué podemos ayudarte hoy?"
+        },
+        footer: {
+          text: "✅ Selecciona una opción"
+        },
+        action: {
+          button: "Servicios",
+          sections: [
+            {
+              title: "Sede Principal 🔧",  // hasta 24 char
+              rows: [
+                { id: "PNDM98", title: "Cambio de aceite",      description: "En sede principal" },
+                { id: "PNDM97", title: "Revisión de frenos",    description: "En sede principal" },
+                { id: "PNDM96", title: "Diagnóstico electrónico",description: "En sede principal" },
+                { id: "PNDM95", title: "Revisión suspensión",    description: "En sede principal" },
+              ],
+            },
+            {
+              title: "Talleres Aliados 🔧",
+              rows: [
+                { id: "DHH18", title: "Alineación/balanceo",  description: "Tercerizado" },
+                { id: "DHH19", title: "Latonería y pintura",   description: "Tercerizado" },
+                { id: "DHH20", title: "Tapicería y cojinería", description: "Tercerizado" },
+                { id: "DHH21", title: "Accesorios y lujos",   description: "Tercerizado" },
+              ],
+            },
+            {
+              title: "Otras opciones 🔄",  // sección extra para navegación
+              rows: [
+                { id: "volver_menu", title: "Volver al menú", description: "" },
+                { id: "DHH22", title: "…Más servicios", description: "Ver más opciones" },
+              ],
+            },
+          ]
+        }
+      };
+      await provider.sendList(ctx.from, list);
+    }
+  )
+  .addAnswer(
+    "", { capture: true },
+    async (ctx, { flowDynamic, gotoFlow }) => {
+      switch (ctx.id) {
+        case "volver_menu":
           return gotoFlow(menuFlow);
-
+        case "DHH22":
+          // si pulsó “…Más servicios”
+          return gotoFlow(mechanicalFlow2);
         default:
-          // si no coincide ninguna opción
-          await flowDynamic("❌ Opción no válida. Por favor, seleccioná una del menú.");
+          // tu lógica actual de cita
+          await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
+          await flowDynamic("¿Deseas agendar una cita para este servicio?");
+          // …
           return gotoFlow(menuFlow);
       }
     }
   );
 
-export { menuFlow };
+export { mechanicalFlow };
