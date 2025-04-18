@@ -47,30 +47,16 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
       await provider.sendList(ctx.from, list);
     }
   )
-  // 2) Capturamos el clic sobre cualquiera de esas opciones
-  .addAnswer(
-    "",
-    { capture: true },
-    async (ctx, { flowDynamic, gotoFlow }) => {
-      // 2a) Si pulsa "volver_menu"
-      if (ctx.id === "volver_menu") {
-        return gotoFlow(menuFlow);
-      }
+    .addAnswer(
+        "",
+        { capture: true },
+        async (ctx: Context, { flowDynamic, gotoFlow }) => {
+            const sel = ctx.id;
+            if (sel === "volver_menu") return gotoFlow(menuFlow);
+            if (sel === "DHH22") return gotoFlow(mechanicalFlow2); // ✅ Redirige
 
-      // 2b) Si pulsa "…Más servicios"
-      if (ctx.id === "DHH22") {
-        return gotoFlow(mechanicalFlow2);
-      }
-
-      // 2c) Cualquier otro id será uno de los servicios -> mostramos reserva
-      // (puedes mapear ctx.id a un nombre amigable, aquí uso ctx.body para simplificar)
-      await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
-      await flowDynamic("¿Deseas agendar una cita para este servicio?");
-      await flowDynamic("🗓️ Responde con *sí* para continuar o *no* para volver al menú.");
-
-      // tras esto podrías gotoFlow(appointmentsFlow) o simplemente volver al menú:
-      return; // si no pones gotoFlow, se mantiene en este mismo handler esperando "sí"/"no"
-    }
-  );
-
+            await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
+            await flowDynamic("¿Deseas agendar una cita para este servicio?");
+        }
+    );
 export { mechanicalFlow };
