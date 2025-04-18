@@ -2,13 +2,13 @@ import { addKeyword } from "@builderbot/bot";
 
 const mechanicalFlow = addKeyword(['mecanica_general'])
  .addAnswer(
-    '👋 ¡Hola! Bienvenido a *Urban Electric Riohacha* 🏍️. Por favor selecciona una opción:',
+    'Por favor selecciona una opción:',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
         header: {
           type: "text",
-          text: "🏍️ Urban Electric Riohacha"
+          text: "Servicio mecánico TecniRacer"
         },
         body: {
           text: "¿En qué podemos ayudarte hoy?"
@@ -17,20 +17,35 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
           text: "✅ Selecciona una opción"
         },
         action: {
-          button: "Menú",
+          button: "Servicios",
           sections: [
             {
-              title: "Vehículos 🚲 y Ubicación📍",
+              title: "Sede Principal - Calle 123 #45-67 🔧",
               rows: [
                 {
-                  id: "catalogo",
-                  title: "Catálogo de vehículos",
-                  description: "Ver catálogo de vehículos electricos"
+                  id: "cambio_aceite",
+                  title: "Cambio de aceite",
+                  description: "Servicio realizado en sede principal"
                 },
                 {
-                  id: "puntos",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "revision_frenos",
+                  title: "Revisión de frenos",
+                  description: "Chequeo completo del sistema de frenos"
+                }
+                {
+                  id: "alineacion_balanceo",
+                  title: "Alineación y balanceo",
+                  description: "Alineación profesional y balanceo"
+                }
+                {
+                  id: "revision_suspension",
+                  title: "Revisión de suspensión",
+                  description: "Inspección detallada de la suspensión"
+                }
+                {
+                  id: "escaneo_testigo",
+                  title: "Escaneo por testigo encendido",
+                  description: "Diagnóstico con scanner automotriz"
                 }
               ]
             },
