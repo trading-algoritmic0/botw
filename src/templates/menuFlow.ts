@@ -1,5 +1,8 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { chatwoot } from "../app";
+import { mechanicalFlow } from "./mechanicalFlow";
+import { partsFlow } from "./partsFlow";
+import { appointmentsFlow } from "./appointmentsFlow";
 
 const menuFlow = addKeyword(EVENTS.ACTION)
   .addAction(async (ctx, { provider }) => {
@@ -46,21 +49,16 @@ const menuFlow = addKeyword(EVENTS.ACTION)
 
     switch (option) {
       case "mecanica_general":
-        await flowDynamic("🔧 Este flujo aún está en construcción.");
-        return gotoFlow(menuFlow);
+        return gotoFlow(mechanicalFlow);
 
       case "repuestos":
-        await flowDynamic("🛠️ Este flujo aún está en construcción.");
-        return gotoFlow(menuFlow);
+        return gotoFlow(partsFlow);
 
       case "consultar_citas":
-        await flowDynamic("📅 Este flujo aún está en construcción.");
-        return gotoFlow(menuFlow);
+        return gotoFlow(appointmentsFlow);
 
       case "contactar_asesor":
-        // Usar solo el inbox principal "Chatbot"
         const inbox = await chatwoot.findOrCreateInbox({ name: "Chatbot" });
-
         await chatwoot.checkAndSetCustomAttribute();
 
         const contact = await chatwoot.findOrCreateContact({
@@ -99,7 +97,7 @@ const menuFlow = addKeyword(EVENTS.ACTION)
         }
 
         await flowDynamic("🧑‍💼 Listo, en breve un asesor se pondrá en contacto con vos.");
-        return endFlow(); // termina el flujo
+        return endFlow();
 
       default:
         await flowDynamic("❌ Opción no válida. Por favor, seleccioná una del menú.");
