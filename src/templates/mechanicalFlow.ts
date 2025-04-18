@@ -46,11 +46,6 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                   id: "PNDM94",
                   title: "Sincronizacion",
                   description: "Sincronizacion de motor"
-                },
-                {
-                  id: "DHH21",
-                  title: "Accesorios y lujos",
-                  description: "Accesorios y lujos"
                 }
               ]
             },
@@ -71,6 +66,11 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                   id: "DHH20",
                   title: "Tapiceria y cojineria",
                   description: "Tapicería y cojineria"
+                },
+                {
+                  id: "DHH21",
+                  title: "Accesorios y lujos",
+                  description: "Accesorios y lujos"
                 },
                 {
                   id: "DHH22",
