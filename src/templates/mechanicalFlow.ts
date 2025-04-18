@@ -1,8 +1,6 @@
-// src/templates/mechanicalFlow.ts
 import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
-import type { Context } from "@builderbot/bot";
 
 const mechanicalFlow = addKeyword(["mecanica_general"])
   // 1) Primera parte: enviamos la lista
@@ -39,7 +37,7 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
               title: "Otras opciones 🔄",
               rows: [
                 { id: "volver_menu", title: "Volver al menú", description: "" },
-                { id: "DHH22",     title: "…Más servicios", description: "Ver más opciones" },
+                { id: "DHH22", title: "…Más servicios", description: "Ver más opciones" },
               ],
             },
           ],
@@ -48,16 +46,32 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
       await provider.sendList(ctx.from, list);
     }
   )
-    .addAnswer(
-        "",
-        { capture: true },
-        async (ctx: Context, { flowDynamic, gotoFlow }) => {
-            const sel = ctx.id;
-            if (sel === "volver_menu") return gotoFlow(menuFlow);
-            if (sel === "DHH22") return gotoFlow(mechanicalFlow2); // ✅ Redirige
 
-            await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
-            await flowDynamic("¿Deseas agendar una cita para este servicio?");
-        }
-    );
+  // 2) Segunda parte: capturamos la selección y redirigimos según sea necesario
+  .addAnswer(
+    "",
+    { capture: true },
+    async (ctx, { flowDynamic, gotoFlow }) => {
+      const serviciosTercerizados = ["DHH18", "DHH19", "DHH20", "DHH21", "DHH22"];
+
+      switch (ctx.body) {
+        case "volver_menu":
+          return gotoFlow(menuFlow);
+
+        case "DHH22":
+          return gotoFlow(mechanicalFlow2);
+
+        default:
+          if (serviciosTercerizados.includes(ctx.body)) {
+            return gotoFlow(mechanicalFlow2); // redirige a opciones extendidas o tercerizadas
+          }
+
+          // Servicios en sede principal o generales
+          await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
+          await flowDynamic("¿Deseas agendar una cita para este servicio?");
+          return gotoFlow(menuFlow); // aquí puedes redirigir a appointmentsFlow si ya está definido
+      }
+    }
+  );
+
 export { mechanicalFlow };
