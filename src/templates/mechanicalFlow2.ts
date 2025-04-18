@@ -1,4 +1,5 @@
 import { addKeyword } from "@builderbot/bot";
+import { mechanicalFlow } from "./mechanicalFlow";
 
 const mechanicalFlow2 = addKeyword(['mecanica_general2'])
  .addAnswer(
