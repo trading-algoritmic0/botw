@@ -1,66 +1,104 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
+import { appointmentsFlow } from "./appointmentsFlow";
+
+const services = [
+  { id: "cambio_aceite", title: "Cambio de aceite", type: "sede" },
+  { id: "revision_frenos", title: "Revisión de frenos", type: "sede" },
+  { id: "alineacion_balanceo", title: "Alineación y balanceo", type: "sede" },
+  { id: "revision_suspension", title: "Revisión de suspensión", type: "sede" },
+  { id: "escaneo_testigo", title: "Escaneo por testigo encendido", type: "sede" },
+  { id: "diagnostico_electronico", title: "Diagnóstico electrónico", type: "aliado" },
+  { id: "sincronizacion_motor", title: "Sincronización de motor", type: "aliado" },
+  { id: "revision_caja", title: "Revisión de caja automática", type: "aliado" },
+  { id: "instalacion_sensores", title: "Instalación de sensores", type: "aliado" },
+  { id: "otro_servicio", title: "Otro servicio / Consultar asesor", type: "aliado" },
+];
 
 const mechanicalFlow = addKeyword(EVENTS.ACTION)
-  .addAnswer("🔧 ¿Con qué servicio de mecánica general podemos ayudarte?", {}, async (ctx, { provider }) => {
-    const list = {
-      header: {
-        type: "text",
-        text: "Servicios de Mecánica General",
-      },
-      body: {
-        text: "Seleccioná uno de los siguientes servicios disponibles 👇",
-      },
-      footer: {
-        text: "TecniRacer - Taller confiable",
-      },
-      action: {
-        button: "📋 Ver servicios",
-        sections: [
-          {
-            title: "Sede Principal - Calle 123 #45-67",
-            rows: [
-              { id: "cambio_aceite", title: "Cambio de aceite", description: "En sede principal" },
-              { id: "revision_frenos", title: "Revisión de frenos", description: "En sede principal" },
-              { id: "alineacion_balanceo", title: "Alineación y balanceo", description: "En sede principal" },
-              { id: "revision_suspension", title: "Revisión de suspensión", description: "En sede principal" },
-              { id: "escaneo_testigo", title: "Escaneo por testigo encendido", description: "En sede principal" },
-            ],
-          },
-          {
-            title: "Talleres Aliados",
-            rows: [
-              { id: "diagnostico_electronico", title: "Diagnóstico electrónico", description: "Taller ElectroCar" },
-              { id: "sincronizacion_motor", title: "Sincronización de motor", description: "Taller SyncMotor" },
-              { id: "revision_caja", title: "Revisión de caja automática", description: "Taller TransTec" },
-              { id: "instalacion_sensores", title: "Instalación de sensores", description: "Taller SensorTech" },
-              { id: "otro_servicio", title: "Otro servicio / Consultar asesor", description: "Taller Asistencia" },
-            ],
-          },
-        ],
-      },
-    };
+  .addAnswer(
+    "🔧 Servicios de Mecánica General",
+    { capture: true },
+    async (ctx, { provider, flowDynamic }) => {
+      const list = {
+        header: {
+          type: "text",
+          text: "Taller Mecánico Automotriz"
+        },
+        body: {
+          text: "Selecciona un servicio:"
+        },
+        footer: {
+          text: "Horario de atención: L-V 8am a 6pm"
+        },
+        action: {
+          button: "Ver servicios disponibles",
+          sections: [
+            {
+              title: "🏭 Servicios en Sede",
+              rows: services
+                .filter(s => s.type === "sede")
+                .map(s => ({
+                  id: s.id,
+                  title: s.title,
+                  description: "Realizado en nuestras instalaciones"
+                }))
+            },
+            {
+              title: "🤝 Servicios Tercerizados",
+              rows: services
+                .filter(s => s.type === "aliado")
+                .map(s => ({
+                  id: s.id,
+                  title: s.title,
+                  description: "Realizado con aliados certificados"
+                }))
+            }
+          ]
+        }
+      };
 
-    await provider.sendList(ctx.from, list);
-  })
-  .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
-    const selectedServiceId = ctx?.id || "";
-    const allServiceIds = [
-      "cambio_aceite", "revision_frenos", "alineacion_balanceo", "revision_suspension", "escaneo_testigo",
-      "diagnostico_electronico", "sincronizacion_motor", "revision_caja", "instalacion_sensores", "otro_servicio",
-    ];
-
-    if (!allServiceIds.includes(selectedServiceId)) {
-      await flowDynamic("❌ Opción inválida. Por favor, seleccioná un servicio del menú.");
-      return gotoFlow(mechanicalFlow);
+      await provider.sendList(ctx.from, list);
     }
+  )
+  .addAnswer(
+    "¿Listo para seleccionar un servicio?",
+    { capture: true }, 
+    async (ctx, { flowDynamic, gotoFlow }) => {
+      const selectedService = services.find(s => s.id === ctx.body);
+      
+      if (!selectedService) {
+        await flowDynamic("⚠️ Opción no reconocida, por favor selecciona una opción válida");
+        return gotoFlow(mechanicalFlow);
+      }
 
-    await flowDynamic(`✅ Has seleccionado el servicio: *${ctx.body}*`);
-    await flowDynamic("¿Deseás agendar una cita para este servicio?");
-    await flowDynamic("📆 Responde con *sí* para continuar o *no* para volver al menú.");
+      await flowDynamic(`✅ Elegiste: *${selectedService.title}*`);
+      await flowDynamic([
+        "¿Deseas agendar una cita ahora?",
+        "Escribe *si* para continuar o *no* para volver al menú"
+      ].join('\n'));
 
-    // Aquí en el futuro conectamos con appointmentsFlow
-    return gotoFlow(menuFlow);
-  });
+      return addKeyword(EVENTS.ACTION)
+        .addAnswer(
+          { capture: true },
+          async (ctx, { flowDynamic, gotoFlow }) => {
+            const response = ctx.body.toLowerCase();
+            
+            if (response === 'si') {
+              await flowDynamic("🚀 Perfecto, vamos a agendar tu cita...");
+              return gotoFlow(appointmentsFlow);
+            }
+            
+            if (response === 'no') {
+              await flowDynamic("🔙 Regresando al menú principal...");
+              return gotoFlow(menuFlow);
+            }
+            
+            await flowDynamic("❌ Respuesta no válida");
+            return gotoFlow(mechanicalFlow);
+          }
+        );
+    }
+  );
 
 export { mechanicalFlow };
