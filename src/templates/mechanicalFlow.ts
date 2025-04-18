@@ -28,6 +28,21 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                   description: "Servicio realizado en sede principal"
                 },
                 {
+                  id: "revision_frenos",
+                  title: "Revisión de frenos",
+                  description: "Chequeo completo del sistema de frenos"
+                },
+                {
+                  id: "alineacionbalanceo",
+                  title: "Alineación y balanceo",
+                  description: "Alineación profesional y balanceo"
+                },
+                {
+                  id: "escaneotestigo",
+                  title: "Escaneo por testigo encendido",
+                  description: "Diagnóstico con scanner automotriz"
+                },
+                {
                   id: "puntos",
                   title: "Puntos de venta",
                   description: "Ubicación y horarios"
