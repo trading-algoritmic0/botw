@@ -1,62 +1,65 @@
 import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 
-const mechanicalFlow = addKeyword('mecanica_general')
-    .addAnswer(
-        '🔧 ¿Con qué servicio de mecánica general podemos ayudarte?',
-        {
-            capture: false
+const mechanicalFlow = addKeyword<Provider, Database>(['hola', 'Buenas', '.', 'Buenos', 'Hola'])
+  .addAnswer(
+    '👋 ¡Hola! Bienvenido a *Urban Electric Riohacha* 🏍️. Por favor selecciona una opción:',
+    { capture: false },
+    async (ctx, { provider }) => {
+      const list = {
+        header: {
+          type: "text",
+          text: "🏍️ Urban Electric Riohacha"
         },
-        async (ctx, {provider}) => {
-            const list = {
-                "header": {
-                    "type": "text",
-                    "text": "Servicios de Mecánica General"
+        body: {
+          text: "¿En qué podemos ayudarte hoy?"
+        },
+        footer: {
+          text: "✅ Selecciona una opción"
+        },
+        action: {
+          button: "Menú",
+          sections: [
+            {
+              title: "Vehículos 🚲 y Ubicación📍",
+              rows: [
+                {
+                  id: "catalogo",
+                  title: "Catálogo de vehículos",
+                  description: "Ver catálogo de vehículos electricos"
                 },
-                "body": {
-                    "text": "Seleccioná uno de los siguientes servicios disponibles 👇"
-                },
-                "footer": {
-                    "text": "TecniRacer - Taller confiable"
-                },
-                "action": {
-                    "button": "📋 Ver servicios",
-                    "sections": [
-                        {
-                            "title": "Sede Principal",
-                            "rows": [
-                                {
-                                    "id": "cambio_aceite",
-                                    "title": "Cambio de aceite",
-                                    "description": "Realizado en sede principal"
-                                },
-                                {
-                                    "id": "revision_frenos",
-                                    "title": "Revisión de frenos",
-                                    "description": "Realizado en sede principal"
-                                }
-                            ]
-                        },
-                        {
-                            "title": "Talleres Aliados",
-                            "rows": [
-                                {
-                                    "id": "revision_caja",
-                                    "title": "Revisión de caja automática",
-                                    "description": "Taller TransTec"
-                                },
-                                {
-                                    "id": "otro_servicio",
-                                    "title": "Otro servicio / Consultar asesor",
-                                    "description": "Taller Asistencia"
-                                }
-                            ]
-                        }
-                    ]
+                {
+                  id: "puntos",
+                  title: "Puntos de venta",
+                  description: "Ubicación y horarios"
                 }
-            };
-            await provider.sendList(ctx.from, list)
+              ]
+            },
+            {
+              title: "Servicio 🔧 y Pago 💳",
+              rows: [
+                {
+                  id: "mantenimiento",
+                  title: "Mantenimiento/Garantía",
+                  description: "Agendar cita o soporte"
+                },
+                {
+                  id: "pagos",
+                  title: "Métodos de pago",
+                  description: "Ver métodos de pago"
+                },
+                {
+                  id: "preguntas",
+                  title: "Tengo preguntas",
+                  description: "Contactar con asesor"
+                }
+              ]
+            }
+          ]
         }
-    );
+      }
+      await provider.sendList(ctx.from, list)
+    }
+  )
 
 export { mechanicalFlow };
