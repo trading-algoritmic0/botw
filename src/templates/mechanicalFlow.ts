@@ -60,8 +60,4 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
       await provider.sendList(ctx.from, list)
     }
   )
-
-      await provider.sendList(ctx.from, list);
-}
-  )
 export { mechanicalFlow };
