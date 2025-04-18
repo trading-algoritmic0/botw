@@ -8,13 +8,13 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
       const list = {
         header: {
           type: "text",
-          text: "🔧 Servicios de Mecánica General"
+          text: "🛠️ Servicios de Mecánica General"
         },
         body: {
-          text: "Seleccioná uno de los siguientes servicios 👇"
+          text: "Seleccioná un servicio para continuar:"
         },
         footer: {
-          text: "TecniRacer - Taller de confianza"
+          text: "TecniRacer 🚗"
         },
         action: {
           button: "📋 Ver servicios",
@@ -25,27 +25,27 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
                 {
                   id: "cambio_aceite",
                   title: "Cambio de aceite",
-                  description: "Servicio realizado en la sede principal"
+                  description: "Realizado en sede principal"
                 },
                 {
                   id: "revision_frenos",
                   title: "Revisión de frenos",
-                  description: "Servicio realizado en la sede principal"
+                  description: "Revisión completa de frenos"
                 },
                 {
                   id: "alineacion_balanceo",
                   title: "Alineación y balanceo",
-                  description: "Servicio realizado en la sede principal"
+                  description: "Servicio de alineación profesional"
                 },
                 {
                   id: "revision_suspension",
                   title: "Revisión de suspensión",
-                  description: "Servicio realizado en la sede principal"
+                  description: "Chequeo de amortiguación"
                 },
                 {
                   id: "escaneo_testigo",
                   title: "Escaneo por testigo encendido",
-                  description: "Servicio realizado en la sede principal"
+                  description: "Diagnóstico por scanner"
                 }
               ]
             },
