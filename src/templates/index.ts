@@ -14,6 +14,7 @@ export default createFlow([
   faqFlow,
   registerFlow,
   menuFlow,
+  mechanicalFlow,
   sendImageFlow,
   sendPdfFlow,
   sendVoiceFlow,
