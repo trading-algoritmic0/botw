@@ -1,4 +1,5 @@
 import { addKeyword } from "@builderbot/bot";
+
 const mechanicalFlow = addKeyword(['mecanica_general'])
  .addAnswer(
     'Por favor selecciona una opción:',
@@ -22,58 +23,58 @@ const mechanicalFlow = addKeyword(['mecanica_general'])
               title: "Sede Principal 🔧",
               rows: [
                 {
-                  id: "cambioaceite",
+                  id: "PNDM98",
                   title: "Cambio de aceite",
-                  description: "Servicio realizado"
+                  description: "Servicio realizado en sede principal"
                 },
                 {
-                  id: "revisionfrenos",
-                  title: "Revision de frenos",
-                  description: "Cambio de pastillas etc"
+                  id: "PNDM97",
+                  title: "Revision Frenos",
+                  description: "Revision de Frenos"
                 },
                 {
-                  id: "singmotor",
-                  title: "Sincronizacion de motor",
-                  description: "Servicio en sede"
+                  id: "PNDM96",
+                  title: "Diagnostico Electronico",
+                  description: "Scanner electronico"
                 },
                 {
-                  id: "scannerdiag",
-                  title: "Diagnostico por scanner",
-                  description: "Diagnostico por scanner"
+                  id: "PNDM95",
+                  title: "Revision Suspencion",
+                  description: "Revision de Suspencion"
                 },
                 {
-                  id: "fugasmotor",
-                  title: "Corrección fugas en motor",
-                  description: "Corrección de fugas"
-                },
-                {
-                  id: "preguntas2",
-                  title: "Tengo preguntas",
-                  description: "Contactar con asesor"
+                  id: "PNDM94",
+                  title: "Sincronizacion",
+                  description: "Sincronizacion de motor"
                 }
               ]
             },
             {
-              title: "Servicio 🔧 y Pago 💳",
+              title: "Talleres Aliados 🔧",
               rows: [
                 {
-                  id: "mantenimiento",
-                  title: "Mantenimiento/Garantía",
-                  description: "Agendar cita o soporte"
+                  id: "DHH18",
+                  title: "Alineacion/balanceo",
+                  description: "Alineacion y balanceo"
                 },
                 {
-                  id: "pagos",
-                  title: "Métodos de pago",
+                  id: "DHH19",
+                  title: "Latoneria y pintura",
                   description: "Ver métodos de pago"
                 },
                 {
-                  id: "preguntas",
-                  title: "Tengo preguntas",
-                  description: "Contactar con asesor"
+                  id: "DHH20",
+                  title: "Tapiceria y cojineria",
+                  description: "Tapicería y cojineria"
                 },
                 {
-                  id: "preguntas1",
-                  title: "Tengo preguntas",
+                  id: "DHH21",
+                  title: "Accesorios y lujos",
+                  description: "Accesorios y lujos"
+                },
+                {
+                  id: "DHH22",
+                  title: "Mas Servicios",
                   description: "Contactar con asesor"
                 }
               ]
