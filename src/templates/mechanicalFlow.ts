@@ -1,11 +1,11 @@
 import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 
-const flowMensaje = addKeyword('mecanica_general')
+const mechanicalFlow = addKeyword('mecanica_general')
     .addAnswer(
         'Aqui va un mensaje',
         {
-            capture: false
+            capture: true
         },
         async (ctx, {provider}) => {
             const list = {
@@ -55,8 +55,8 @@ const flowMensaje = addKeyword('mecanica_general')
                     ]
                 }
             }
-            await provider.sendList(ctx.from, list)
+            await provider.sendLists(ctx.from, list)
         }
     )
 
-export { flowMensaje as mechanicalFlow };
+export { mechanicalFlow };
