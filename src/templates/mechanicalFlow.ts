@@ -1,63 +1,90 @@
 import { addKeyword } from "@builderbot/bot";
 
 const mechanicalFlow = addKeyword(['mecanica_general'])
- .addAnswer(
-    '👋 ¡Hola! Bienvenido a *Urban Electric Riohacha* 🏍️. Por favor selecciona una opción:',
+  .addAnswer(
+    '🔧 ¿Con qué servicio de mecánica general podemos ayudarte?',
     { capture: false },
     async (ctx, { provider }) => {
       const list = {
         header: {
           type: "text",
-          text: "🏍️ Urban Electric Riohacha"
+          text: "🔧 Servicios de Mecánica General"
         },
         body: {
-          text: "¿En qué podemos ayudarte hoy?"
+          text: "Seleccioná uno de los siguientes servicios 👇"
         },
         footer: {
-          text: "✅ Selecciona una opción"
+          text: "TecniRacer - Taller de confianza"
         },
         action: {
-          button: "Menú",
+          button: "📋 Ver servicios",
           sections: [
             {
-              title: "Vehículos 🚲 y Ubicación📍",
+              title: "Sede Principal",
               rows: [
                 {
-                  id: "catalogo",
-                  title: "Catálogo de vehículos",
-                  description: "Ver catálogo de vehículos electricos"
+                  id: "cambio_aceite",
+                  title: "Cambio de aceite",
+                  description: "Servicio realizado en la sede principal"
                 },
                 {
-                  id: "puntos",
-                  title: "Puntos de venta",
-                  description: "Ubicación y horarios"
+                  id: "revision_frenos",
+                  title: "Revisión de frenos",
+                  description: "Servicio realizado en la sede principal"
+                },
+                {
+                  id: "alineacion_balanceo",
+                  title: "Alineación y balanceo",
+                  description: "Servicio realizado en la sede principal"
+                },
+                {
+                  id: "revision_suspension",
+                  title: "Revisión de suspensión",
+                  description: "Servicio realizado en la sede principal"
+                },
+                {
+                  id: "escaneo_testigo",
+                  title: "Escaneo por testigo encendido",
+                  description: "Servicio realizado en la sede principal"
                 }
               ]
             },
             {
-              title: "Servicio 🔧 y Pago 💳",
+              title: "Talleres Aliados",
               rows: [
                 {
-                  id: "mantenimiento",
-                  title: "Mantenimiento/Garantía",
-                  description: "Agendar cita o soporte"
+                  id: "diagnostico_electronico",
+                  title: "Diagnóstico electrónico",
+                  description: "Taller ElectroCar"
                 },
                 {
-                  id: "pagos",
-                  title: "Métodos de pago",
-                  description: "Ver métodos de pago"
+                  id: "sincronizacion_motor",
+                  title: "Sincronización de motor",
+                  description: "Taller SyncMotor"
                 },
                 {
-                  id: "preguntas",
-                  title: "Tengo preguntas",
-                  description: "Contactar con asesor"
+                  id: "revision_caja",
+                  title: "Revisión de caja automática",
+                  description: "Taller TransTec"
+                },
+                {
+                  id: "instalacion_sensores",
+                  title: "Instalación de sensores",
+                  description: "Taller SensorTech"
+                },
+                {
+                  id: "otro_servicio",
+                  title: "Otro servicio / Consultar asesor",
+                  description: "Taller Asistencia"
                 }
               ]
             }
           ]
         }
-      }
-      await provider.sendList(ctx.from, list)
+      };
+
+      await provider.sendList(ctx.from, list);
     }
-  )
+  );
+
 export { mechanicalFlow };
