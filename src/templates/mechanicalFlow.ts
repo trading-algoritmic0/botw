@@ -59,4 +59,4 @@ const flowMensaje = addKeyword('mecanica_general')
         }
     )
 
-export { mechanicalFlow };
+export { flowMensaje as mechanicalFlow };
