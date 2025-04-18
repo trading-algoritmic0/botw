@@ -1,6 +1,6 @@
 import { addKeyword } from "@builderbot/bot";
 
-const mechanicalFlow2 = addKeyword(['mecanica_general'])
+const mechanicalFlow2 = addKeyword(['mecanica_general2'])
  .addAnswer(
     'Por favor selecciona una opción:',
     { capture: false },
