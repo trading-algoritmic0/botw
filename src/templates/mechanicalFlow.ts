@@ -1,10 +1,9 @@
-// src/templates/mechanicalFlow.ts
 import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
-import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2"; // <-- ruta corregida
+import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
 
 const mechanicalFlow = addKeyword(["mecanica_general"])
-  // 1) .addAction para enviar la lista
+  // 1) addAction envía la lista interactiva
   .addAction(async (ctx, { provider }) => {
     const list = {
       header: { type: "text", text: "Servicio mecánico TecniRacer" },
@@ -25,17 +24,17 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
           {
             title: "Talleres Aliados 🔧",
             rows: [
-              { id: "DHH18", title: "Alineación/balanceo",   description: "Tercerizado" },
-              { id: "DHH19", title: "Latonería y pintura",    description: "Tercerizado" },
-              { id: "DHH20", title: "Tapicería y cojinería",  description: "Tercerizado" },
-              { id: "DHH21", title: "Accesorios y lujos",    description: "Tercerizado" },
+              { id: "DHH18", title: "Alineación/balanceo",  description: "Tercerizado" },
+              { id: "DHH19", title: "Latonería y pintura",   description: "Tercerizado" },
+              { id: "DHH20", title: "Tapicería y cojinería", description: "Tercerizado" },
+              { id: "DHH21", title: "Accesorios y lujos",   description: "Tercerizado" },
             ],
           },
           {
             title: "Otras opciones 🔄",
             rows: [
-              { id: "volver_menu", title: "Volver al menú", description: "" },
-              { id: "DHH22",      title: "…Más servicios",  description: "Ver más opciones" },
+              { id: "volver_menu", title: "Volver al menú",   description: "aaaa" },
+              { id: "DHH22",      title: "…Más servicios",    description: "Ver más opciones" },
             ],
           },
         ],
@@ -43,17 +42,15 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
     };
     await provider.sendList(ctx.from, list);
   })
-  // 2) .addAnswer captura el click (ctx.id) y redirige
+  // 2) addAnswer captura el click y redirige
   .addAnswer(
-    "",         // match de cualquier click en la lista
+    "",              // captura cualquier texto, pero aquí viene el ctx.id de la lista
     { capture: true },
     async (ctx, { flowDynamic, gotoFlow }) => {
       const sel = ctx.id;
-
       if (sel === "volver_menu") {
         return gotoFlow(menuFlow);
       }
-
       if (sel === "DHH22") {
         return gotoFlow(mechanicalFlow2);
       }
@@ -62,9 +59,7 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
       await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
       await flowDynamic("¿Deseas agendar una cita para este servicio?");
       // aquí podrías: return gotoFlow(appointmentsFlow);
-      // o simplemente “return;” para esperar “sí/no”
       return;
     }
-  );
-
+  )
 export { mechanicalFlow };
