@@ -8,7 +8,7 @@ const ayBalanceo = addKeyword(["DHH18"])
     async (ctx, { provider }) => {
       // 1. Enviar imagen con descripción
       await provider.sendImage(ctx.from, {
-        url: "https://raw.githubusercontent.com/trading-algoritmic0/botw/main/public/assets/photo1.jpg",
+        url: "https://imgur.com/a/JQImm3Q",
         caption: "🔧 *Alineación y balanceo*",
       });
 
