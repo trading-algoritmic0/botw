@@ -1,7 +1,7 @@
 import { addKeyword } from "@builderbot/bot";
 import { mechanicalFlow } from "../mechanicalFlow";
 
-const ayBalanceo = addKeyword()
+const ayBalanceo = addKeyword(["_ayBalanceo"])
   .addAnswer(
     "", // sin texto inicial
     { capture: false },
