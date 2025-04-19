@@ -2,6 +2,10 @@ import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
 import { ayBalanceo } from "./mechanical/ayBalanceo";
+// Puedes importar los demás flujos aquí
+// import { latonpintura } from "./mechanical/latonpintura";
+// import { tapiceria } from "./mechanical/tapiceria";
+// import { tiendLujos } from "./mechanical/tiendLujos";
 
 const mechanicalFlow = addKeyword(["mecanica_general"])
   // 1) Primera parte: enviamos la lista
@@ -53,8 +57,6 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
     "",
     { capture: true },
     async (ctx, { flowDynamic, gotoFlow }) => {
-      const serviciosTercerizados = ["DHH18", "DHH19", "DHH20", "DHH21", "DHH22"];
-
       switch (ctx.body) {
         case "volver_menu":
           return gotoFlow(menuFlow);
@@ -62,15 +64,21 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
         case "DHH22":
           return gotoFlow(mechanicalFlow2);
 
-        default:
-          if (serviciosTercerizados.includes(ctx.body)) {
-            return gotoFlow(mechanicalFlow2); // redirige a opciones extendidas o tercerizadas
-          }
+        case "DHH18":
+          return gotoFlow(ayBalanceo);
 
-          // Servicios en sede principal o generales
+        // Aquí puedes agregar los demás servicios individualmente
+        // case "DHH19":
+        //   return gotoFlow(latonpintura);
+        // case "DHH20":
+        //   return gotoFlow(tapiceria);
+        // case "DHH21":
+        //   return gotoFlow(tiendLujos);
+
+        default:
           await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
           await flowDynamic("¿Deseas agendar una cita para este servicio?");
-          return gotoFlow(menuFlow); // aquí puedes redirigir a appointmentsFlow si ya está definido
+          return gotoFlow(menuFlow); // o appointmentsFlow si ya está definido
       }
     }
   );
