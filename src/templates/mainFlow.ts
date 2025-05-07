@@ -2,8 +2,13 @@ import { addKeyword, EVENTS } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 import sheetsService from "../services/sheetsService";
 import { DetectIntention } from "./intention.flow";
-import fs from "fs/promises";
-import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import fs from 'fs/promises';
+
+// Resolver __dirname en ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const mainFlow = addKeyword([
   EVENTS.WELCOME,
@@ -11,40 +16,43 @@ const mainFlow = addKeyword([
   EVENTS.MEDIA,
   EVENTS.DOCUMENT,
 ]).addAction(async (ctx, { provider, flowDynamic, gotoFlow, endFlow }) => {
-  // 1) No soportamos notas de voz ni docs
   if (ctx.body.includes("_event_")) {
     return endFlow(
       "Aún no tengo la capacidad de procesar documentos, multimedia o notas de voz."
     );
   }
 
-  // 2) ¿Usuario registrado?
   const isUser = await sheetsService.userExists(ctx.from);
   if (!isUser) {
     try {
-      // 3) Carga buffers locales
-      const imgPath   = path.resolve(__dirname, "../public/assets/photo1.jpg");
-      const audioPath = path.resolve(__dirname, "../public/assets/audio.mp3");
-      const imgBuffer   = await fs.readFile(imgPath);
-      const audioBuffer = await fs.readFile(audioPath);
+      // Rutas locales
+      const imgPath   = resolve(__dirname, "../public/assets/photo1.jpg");
+      const audioPath = resolve(__dirname, "../public/assets/audio.mp3");
 
-      // 4) Envía imagen (buffer) y texto
+      // Leer buffers
+      const [imgBuffer, audioBuffer] = await Promise.all([
+        fs.readFile(imgPath),
+        fs.readFile(audioPath),
+      ]);
+
+      // Enviar imagen
       await provider.sendFile(ctx.from, imgBuffer, "");
+
+      // Mensaje de bienvenida
       await provider.sendText(
         ctx.from,
         "¡Hola! Bienvenid@ a *TecniRacer B/ga*, servicio de mantenimiento automotriz. Te saluda el Ing. Daniel Palacio."
       );
 
-      // 5) Envía audio (buffer)
+      // Enviar audio
       await provider.sendFile(ctx.from, audioBuffer, "");
 
-      // 6) Invitación al menú
+      // Invitación al menú
       await flowDynamic("🛠️ Por favor selecciona una opción del menú:");
       return gotoFlow(menuFlow);
 
     } catch (err: any) {
       console.error("Error en mainFlow:", err);
-      // Manejamos el error sin reventar el servidor
       return endFlow(
         "Lo siento, ha ocurrido un error enviando los archivos. Por favor intenta de nuevo más tarde."
       );
