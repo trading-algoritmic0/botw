@@ -7,16 +7,16 @@ const camAceite = addKeyword(["camAceite"])
   .addAction(async (ctx, { provider }) => {
     const imagePath = path.resolve(process.cwd(), "public/assets/photo1.jpg");
 
-    await provider.sendButtonsMedia(
-      ctx.from,
-      "image",
-      [
-        { type: "reply", reply: { id: "confirmar", title: "✅ Confirmar" } },
-        { type: "reply", reply: { id: "cancelar", title: "❌ Cancelar" } },
-      ],
-      "🛢️ *Cambio de Aceite*\nIncluye revisión de niveles y filtros.\n¿Quieres agendar este servicio?",
-      imagePath
-    );
+await provider.sendButtonsMedia(
+  ctx.from,
+  "image",
+  [
+    { body: "✅ Confirmar" },
+    { body: "❌ Cancelar" }
+  ],
+  "🛢️ *Cambio de Aceite*\nIncluye revisión de niveles y filtros.\n¿Quieres agendar este servicio?",
+  imagePath
+);
   })
   .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
     if (ctx.body === "confirmar") {
