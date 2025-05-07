@@ -1,14 +1,14 @@
 import { addKeyword } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
-import { ayBalanceo } from "./mechanical/ayBalanceo";
-// Puedes importar los demás flujos aquí
-// import { latonpintura } from "./mechanical/latonpintura";
-// import { tapiceria } from "./mechanical/tapiceria";
-// import { tiendLujos } from "./mechanical/tiendLujos";
+
+// Importa tus flujos específicos
+import { camAceite } from "./mechanical/camAceite";
+import { revFrenos } from "./mechanical/revFrenos";
+import { diagElectronico } from "./mechanical/diagElectronico";
+import { revSuspe } from "./mechanical/revSuspe";
 
 const mechanicalFlow = addKeyword(["mecanica_general"])
-  // 1) Primera parte: enviamos la lista
   .addAnswer(
     "Por favor selecciona un servicio:",
     { capture: false },
@@ -23,26 +23,21 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
             {
               title: "Sede Principal 🔧",
               rows: [
-                { id: "PNDM98", title: "Cambio de aceite", description: "En sede principal" },
-                { id: "PNDM97", title: "Revisión de frenos", description: "En sede principal" },
-                { id: "PNDM96", title: "Diagnóstico electrónico", description: "En sede principal" },
-                { id: "PNDM95", title: "Revisión suspensión", description: "En sede principal" },
-              ],
-            },
-            {
-              title: "Talleres Aliados 🔧",
-              rows: [
-                { id: "DHH18", title: "Alineación/balanceo", description: "Tercerizado" },
-                { id: "DHH19", title: "Latonería y pintura", description: "Tercerizado" },
-                { id: "DHH20", title: "Tapicería y cojinería", description: "Tercerizado" },
-                { id: "DHH21", title: "Accesorios y lujos", description: "Tercerizado" },
+                { id: "SER1", title: "Cambio de aceite", description: "En sede principal" },
+                { id: "SER2", title: "Revisión de frenos", description: "En sede principal" },
+                { id: "SER3", title: "Diagnóstico electrónico", description: "En sede principal" },
+                { id: "SER4", title: "Revisión suspensión", description: "En sede principal" },
+                { id: "SER5", title: "Servicio 5", description: "En sede principal" },
+                { id: "SER6", title: "Servicio 6", description: "En sede principal" },
+                { id: "SER7", title: "Servicio 7", description: "En sede principal" },
+                { id: "SER8", title: "Servicio 8", description: "En sede principal" },
               ],
             },
             {
               title: "Otras opciones 🔄",
               rows: [
                 { id: "volver_menu", title: "Volver al menú", description: "" },
-                { id: "DHH22", title: "…Más servicios", description: "Ver más opciones" },
+                { id: "mas_servicios", title: "…Más servicios", description: "Ver más opciones" },
               ],
             },
           ],
@@ -51,34 +46,37 @@ const mechanicalFlow = addKeyword(["mecanica_general"])
       await provider.sendList(ctx.from, list);
     }
   )
-
-  // 2) Segunda parte: capturamos la selección y redirigimos según sea necesario
   .addAnswer(
     "",
     { capture: true },
-    async (ctx, { flowDynamic, gotoFlow }) => {
+    async (ctx, { gotoFlow }) => {
       switch (ctx.body) {
         case "volver_menu":
           return gotoFlow(menuFlow);
 
-        case "DHH22":
+        case "mas_servicios":
           return gotoFlow(mechanicalFlow2);
 
-        case "DHH18":
-          return gotoFlow(ayBalanceo);
+        case "SER1":
+          return gotoFlow(camAceite);
 
-        // Aquí puedes agregar los demás servicios individualmente
-        // case "DHH19":
-        //   return gotoFlow(latonpintura);
-        // case "DHH20":
-        //   return gotoFlow(tapiceria);
-        // case "DHH21":
-        //   return gotoFlow(tiendLujos);
+        case "SER2":
+          return gotoFlow(revFrenos);
+
+        case "SER3":
+          return gotoFlow(diagElectronico);
+
+        case "SER4":
+          return gotoFlow(revSuspe);
+
+        // Aquí puedes continuar enlazando:
+        // case "SER5": return gotoFlow(servicio5Flow);
+        // case "SER6": return gotoFlow(servicio6Flow);
+        // case "SER7": return gotoFlow(servicio7Flow);
+        // case "SER8": return gotoFlow(servicio8Flow);
 
         default:
-          await flowDynamic(`✅ Has seleccionado *${ctx.body}*`);
-          await flowDynamic("¿Deseas agendar una cita para este servicio?");
-          return gotoFlow(menuFlow); // o appointmentsFlow si ya está definido
+          return gotoFlow(menuFlow);
       }
     }
   );
