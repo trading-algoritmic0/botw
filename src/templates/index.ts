@@ -11,9 +11,9 @@ import { fallbackFlow } from "./fallbackFlow";
 import { mechanicalFlow } from "./mechanicalFlow";
 import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
 import { camAceite } from "./mechanical/camAceite";
-import { camAceite } from "./mechanical/revFrenos";
-import { camAceite } from "./mechanical/diagElectronico";
-import { camAceite } from "./mechanical/revSuspe";
+import { revFrenos } from "./mechanical/revFrenos";
+import { diagElectronico } from "./mechanical/diagElectronico";
+import { revSuspe } from "./mechanical/revSuspe";
 
 export default createFlow([
   mainFlow,
