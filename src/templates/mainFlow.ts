@@ -6,7 +6,7 @@ import { DetectIntention } from "./intention.flow";
 /**
  * mainFlow: Maneja el evento de bienvenida y el registro de usuarios.
  * Envía imagen, texto de bienvenida y audio solo para nuevos usuarios,
- * luego redirige a registerFlow o DetectIntention según corresponda.
+ * luego redirige al menú principal o DetectIntention según corresponda.
  */
 const mainFlow = addKeyword([
   EVENTS.WELCOME,
@@ -25,13 +25,13 @@ const mainFlow = addKeyword([
   const isUser = await sheetsService.userExists(ctx.from);
 
   if (!isUser) {
-    // Enviar secuencia de bienvenida
+    // Secuencia de bienvenida para nuevos usuarios
     await provider.sendImageUrl(
       ctx.from,
       "https://raw.githubusercontent.com/trading-algoritmic0/botw/main/public/assets/photo1.jpg",
       ""
     );
-    await provider.sendMessage(
+    await provider.sendText(
       ctx.from,
       "¡Hola! Bienvenid@ a *TecniRacer B/ga*, servicio de mantenimiento especializado automotriz. Te saluda el Ing. Daniel Palacio."
     );
@@ -41,9 +41,9 @@ const mainFlow = addKeyword([
       ""
     );
 
-    // Indicar seleccion del menu y redireccionar
+    // Indicar selección del menú y redirigir
     await flowDynamic(
-      "🛠️ Para iniciar, por favor selecciona una opción del menú:"
+      "🛠️ Por favor selecciona una opción del menú:"
     );
     return gotoFlow(menuFlow);
   } else {
