@@ -3,7 +3,7 @@ import path from "path";
 import { menuFlow } from "../menuFlow";
 import { appointmentsFlow } from "../appointmentsFlow";
 
-const camAceite = addKeyword(["revSuspe"])
+const revSuspe = addKeyword(["revSuspe"])
   .addAction(async (ctx, { provider }) => {
     const imagePath = path.resolve(process.cwd(), "public/assets/photo1.jpg");
 
