@@ -10,7 +10,7 @@ import { faqFlow } from "./faqFlow";
 import { fallbackFlow } from "./fallbackFlow";
 import { mechanicalFlow } from "./mechanicalFlow";
 import { mechanicalFlow2 } from "./mechanical/mechanicalFlow2";
-import { ayBalanceo } from "./mechanical/ayBalanceo";
+import { camAceite } from "./mechanical/camAceite";
 
 export default createFlow([
   mainFlow,
@@ -18,7 +18,7 @@ export default createFlow([
   registerFlow,
   menuFlow,
   mechanicalFlow,
-  ayBalanceo,
+  camAceite,
   mechanicalFlow2,
   sendImageFlow,
   sendPdfFlow,
