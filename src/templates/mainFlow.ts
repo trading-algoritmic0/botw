@@ -37,8 +37,7 @@ const mainFlow = addKeyword([
     );
     await provider.sendFile(
       ctx.from,
-      "https://raw.githubusercontent.com/trading-algoritmic0/botw/main/public/assets/audio.mp3",
-      ""
+      "https://raw.githubusercontent.com/trading-algoritmic0/botw/main/public/assets/audio.mp3"
     );
 
     // Indicar selección del menú y redirigir
