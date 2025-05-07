@@ -1,7 +1,7 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { menuFlow } from "./menuFlow";
 import sheetsService from "../services/sheetsService";
-import { DetectIntention } from "./intentionFlow";
+import { DetectIntention } from "./intention.flow";
 
 const mainFlow = addKeyword([
   EVENTS.WELCOME,
