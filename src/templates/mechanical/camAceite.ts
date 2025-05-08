@@ -5,7 +5,6 @@ import { appointmentsFlow } from "../appointmentsFlow";
 
 const camAceite = addKeyword(["camAceite"])
   .addAction(async (ctx, { provider }) => {
-    const imagePath = path.resolve(process.cwd(), "./public/assets/photo1.jpg");
 
     await provider.sendButtonsMedia(
       ctx.from,
@@ -15,7 +14,7 @@ const camAceite = addKeyword(["camAceite"])
         { body: "Cancelar ❌" }     // <= máx 20 caracteres
       ],
       "🛢️ Cambio de Aceite\nRevisión de niveles y filtros.\n¿Agendamos tu cita?",
-      imagePath
+      "https://raw.githubusercontent.com/trading-algoritmic0/botw/refs/heads/main/public/assets/photo1.jpg"
     );
   })
   .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
