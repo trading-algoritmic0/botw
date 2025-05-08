@@ -143,7 +143,7 @@ class SheetManager {
     }
 }
 
-export const sheetsService = new SheetManager(
+export default new SheetManager(
     config.spreadsheetId,
     config.privateKey,
     config.clientEmail
