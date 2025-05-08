@@ -1,8 +1,18 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import sheetsService from "../services/sheetsService";
-import { menuFlow } from "./menuFlow";
+import { appointmentsFlow } from "./appointmentsFlow";
 
 const registerFlow = addKeyword(EVENTS.ACTION)
+  .addAction(async (ctx, { flowDynamic, gotoFlow }) => {
+    const isUser = await sheetsService.userExists(ctx.from);
+
+    if (isUser) {
+      await flowDynamic("✅ Ya estás registrado, ¡vamos a agendar tu cita!");
+      return gotoFlow(appointmentsFlow);
+    } else {
+      await flowDynamic("📋 Antes de agendar, necesito registrarte rápidamente.");
+    }
+  })
   .addAnswer(
     `¿Querés comenzar con el registro?`,
     {
@@ -54,11 +64,10 @@ const registerFlow = addKeyword(EVENTS.ACTION)
 
       await ctxFn.flowDynamic([
         "✅ ¡Registro completo!",
-        "🚀 Ahora te mostraré el menú de opciones."
+        "🚀 Ahora vamos a agendar tu cita."
       ]);
 
-      // 👉 Aquí evitamos que el flujo anterior siga capturando mensajes
-      return ctxFn.gotoFlow(menuFlow);
+      return ctxFn.gotoFlow(appointmentsFlow);
     }
   );
 
