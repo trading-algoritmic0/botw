@@ -14,7 +14,7 @@ const camAceite = addKeyword(["camAceite"])
         { body: "Cancelar ❌" }     // <= máx 20 caracteres
       ],
       "🛢️ Cambio de Aceite\nRevisión de niveles y filtros.\n¿Agendamos tu cita?",
-      "./public/assets/photo1.jpg"
+      "https://raw.githubusercontent.com/trading-algoritmic0/botw/refs/heads/main/public/assets/photo1.jpg"
     );
   })
   .addAnswer("", { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
