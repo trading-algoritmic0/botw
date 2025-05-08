@@ -59,21 +59,16 @@ class SheetManager {
                 spreadsheetId: this.spreadsheetId,
                 requestBody: {
                     requests: [
-                        {
-                            addSheet: {
-                                properties: {
-                                    title: number,
-                                },
-                            },
-                        },
+                        { addSheet: { properties: { title: number } } },
+                        { addSheet: { properties: { title: `citas-${number}` } } },
                     ],
                 },
             });
 
-            // Añadir encabezados en la pestaña del usuario
+            // Encabezados para citas
             await this.sheets.spreadsheets.values.update({
                 spreadsheetId: this.spreadsheetId,
-                range: `${number}!A1:G1`,
+                range: `citas-${number}!A1:G1`,
                 valueInputOption: 'RAW',
                 requestBody: {
                     values: [
@@ -87,56 +82,91 @@ class SheetManager {
         }
     }
 
+    async getUserConv(number: string): Promise<any[]> {
+        try {
+            const result = await this.sheets.spreadsheets.values.get({
+                spreadsheetId: this.spreadsheetId,
+                range: `${number}!A:C`,
+            });
+            const rows = result.data.values;
+            if (!rows || rows.length === 0) {
+                return [];
+            }
+            const lastConversations = rows.slice(0, 3);
+            const formattedConversations = [];
+            for (let i = 0; i < lastConversations.length; i++) {
+                const [userQuestion, assistantAnswer] = lastConversations[i];
+                formattedConversations.push(
+                    { role: "user", content: userQuestion },
+                    { role: "assistant", content: assistantAnswer }
+                );
+            }
+            return formattedConversations;
+        } catch (error) {
+            console.error("Error al obtener la conversación del usuario:", error);
+            return [];
+        }
+    }
+
+    async addConverToUser(number: string, conversation: { role: string, content: string }[]): Promise<void> {
+        try {
+            const question = conversation.find(c => c.role === "user")?.content;
+            const answer = conversation.find(c => c.role === "assistant")?.content;
+            const date = new Date().toISOString();
+            if (!question || !answer) {
+                throw new Error("La conversación debe contener tanto una pregunta como una respuesta.");
+            }
+            const sheetData = await this.sheets.spreadsheets.values.get({
+                spreadsheetId: this.spreadsheetId,
+                range: `${number}!A:C`,
+            });
+            const rows = sheetData.data.values || [];
+            rows.unshift([question, answer, date]);
+            await this.sheets.spreadsheets.values.update({
+                spreadsheetId: this.spreadsheetId,
+                range: `${number}!A:C`,
+                valueInputOption: 'RAW',
+                requestBody: { values: rows },
+            });
+        } catch (error) {
+            console.error("Error al agregar la conversación:", error);
+        }
+    }
+
     async addAppointmentToUser(
         number: string,
         appointment: {
             date: string;
             service: string;
-            sede: string; // "Principal" o "Aliado"
-            status: string; // "Confirmada", "Pendiente", "Cancelada"
+            sede: string;
+            status: string;
             notes: string;
             lastUpdate: string;
             operator: string;
         }
     ): Promise<void> {
         try {
+            const citasSheet = `citas-${number}`;
             const sheetData = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: this.spreadsheetId,
-                range: `${number}!A:G`,
+                range: `${citasSheet}!A:G`,
             });
-
             const rows = sheetData.data.values || [];
-
-            // Insertar al inicio (debajo de encabezado si ya está)
-            if (rows.length > 0 && rows[0][0] === "Fecha cita") {
-                rows.splice(1, 0, [
-                    appointment.date,
-                    appointment.service,
-                    appointment.sede,
-                    appointment.status,
-                    appointment.notes,
-                    appointment.lastUpdate,
-                    appointment.operator
-                ]);
-            } else {
-                rows.unshift([
-                    appointment.date,
-                    appointment.service,
-                    appointment.sede,
-                    appointment.status,
-                    appointment.notes,
-                    appointment.lastUpdate,
-                    appointment.operator
-                ]);
-            }
-
+            rows.push([
+                appointment.date,
+                appointment.service,
+                appointment.sede,
+                appointment.status,
+                appointment.notes,
+                appointment.lastUpdate,
+                appointment.operator
+            ]);
             await this.sheets.spreadsheets.values.update({
                 spreadsheetId: this.spreadsheetId,
-                range: `${number}!A:G`,
+                range: `${citasSheet}!A:G`,
                 valueInputOption: 'RAW',
                 requestBody: { values: rows },
             });
-
         } catch (error) {
             console.error("Error al agregar la cita:", error);
         }
