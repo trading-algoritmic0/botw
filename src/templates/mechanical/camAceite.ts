@@ -1,7 +1,7 @@
 import { addKeyword } from "@builderbot/bot";
 import path from "path";
 import { menuFlow } from "../menuFlow";
-import { appointmentsFlow } from "../appointmentsFlow";
+import { registerFlow } from "../registerFlow";
 
 const camAceite = addKeyword(["camAceite"])
   .addAction(async (ctx, { provider }) => {
@@ -22,7 +22,7 @@ const camAceite = addKeyword(["camAceite"])
 
     if (userResponse === "confirmar ✅".toLowerCase()) {
       await flowDynamic("✅ ¡Perfecto! Vamos a agendar tu cita.");
-      return gotoFlow(appointmentsFlow);
+      return gotoFlow(registerFlow);
     } else if (userResponse === "cancelar ❌".toLowerCase()) {
       await flowDynamic("❌ Sin problema, te regreso al menú.");
       return gotoFlow(menuFlow);
