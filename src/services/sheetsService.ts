@@ -106,15 +106,29 @@ class SheetManager {
             });
 
             const rows = sheetData.data.values || [];
-            rows.unshift([
-                appointment.date,
-                appointment.service,
-                appointment.sede,
-                appointment.status,
-                appointment.notes,
-                appointment.lastUpdate,
-                appointment.operator
-            ]);
+
+            // Insertar al inicio (debajo de encabezado si ya está)
+            if (rows.length > 0 && rows[0][0] === "Fecha cita") {
+                rows.splice(1, 0, [
+                    appointment.date,
+                    appointment.service,
+                    appointment.sede,
+                    appointment.status,
+                    appointment.notes,
+                    appointment.lastUpdate,
+                    appointment.operator
+                ]);
+            } else {
+                rows.unshift([
+                    appointment.date,
+                    appointment.service,
+                    appointment.sede,
+                    appointment.status,
+                    appointment.notes,
+                    appointment.lastUpdate,
+                    appointment.operator
+                ]);
+            }
 
             await this.sheets.spreadsheets.values.update({
                 spreadsheetId: this.spreadsheetId,
@@ -128,3 +142,9 @@ class SheetManager {
         }
     }
 }
+
+export const sheetsService = new SheetManager(
+    config.spreadsheetId,
+    config.privateKey,
+    config.clientEmail
+);
