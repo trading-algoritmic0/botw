@@ -1,5 +1,5 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
-import sheetsService from "../services/sheetsService";
+import { sheetsService } from "../services/sheetsService";
 import { appointmentsFlow } from "./appointmentsFlow";
 
 const registerFlow = addKeyword(EVENTS.ACTION)
