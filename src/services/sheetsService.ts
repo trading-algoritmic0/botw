@@ -65,7 +65,6 @@ class SheetManager {
                 },
             });
 
-            // Encabezados para citas
             await this.sheets.spreadsheets.values.update({
                 spreadsheetId: this.spreadsheetId,
                 range: `citas-${number}!A1:G1`,
@@ -76,7 +75,6 @@ class SheetManager {
                     ],
                 },
             });
-
         } catch (error) {
             console.error("Error al crear usuario o nueva pestaña:", error);
         }
@@ -148,38 +146,31 @@ class SheetManager {
         try {
             const citasSheet = `citas-${number}`;
 
-            // Verificar si existe encabezado, si no, lo crea
-            const sheetData = await this.sheets.spreadsheets.values.get({
-                spreadsheetId: this.spreadsheetId,
-                range: `${citasSheet}!A:G`,
-            });
-
-            const rows = sheetData.data.values || [];
-
-            if (rows.length === 0) {
-                rows.push(["Fecha cita", "Servicio", "Sede", "Estado", "Notas", "Última actualización", "Operador"]);
-            }
-
-            rows.push([
-                appointment.date,
-                appointment.service,
-                appointment.sede,
-                appointment.status,
-                appointment.notes,
-                appointment.lastUpdate,
-                appointment.operator
-            ]);
-
-            await this.sheets.spreadsheets.values.update({
+            await this.sheets.spreadsheets.values.append({
                 spreadsheetId: this.spreadsheetId,
                 range: `${citasSheet}!A:G`,
                 valueInputOption: 'RAW',
-                requestBody: { values: rows },
+                requestBody: {
+                    values: [[
+                        appointment.date,
+                        appointment.service,
+                        appointment.sede,
+                        appointment.status,
+                        appointment.notes,
+                        appointment.lastUpdate,
+                        appointment.operator
+                    ]],
+                },
             });
         } catch (error) {
             console.error("Error al agregar la cita:", error);
         }
     }
+
+    // 🔧 Lugar preparado para futura función update
+    // async updateAppointment(...) { 
+    //     → aquí puedes implementar la actualización de citas (cambiar estado, fecha, etc.)
+    // }
 }
 
 export default new SheetManager(
