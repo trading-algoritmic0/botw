@@ -5,7 +5,7 @@ import { appointmentsFlow } from "../appointmentsFlow";
 
 const camAceite = addKeyword(["camAceite"])
   .addAction(async (ctx, { provider }) => {
-    const imagePath = path.resolve(process.cwd(), "public/assets/photo1.jpg");
+    const imagePath = path.resolve(process.cwd(), "./public/assets/photo1.jpg");
 
 await provider.sendButtonsMedia(
   ctx.from,
