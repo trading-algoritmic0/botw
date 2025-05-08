@@ -134,6 +134,57 @@ class SheetManager {
     }
 
     async addAppointmentToUser(
+    number: string,
+    appointment: {
+        date: string;
+        service: string;
+        sede: string;
+        status: string;
+        notes: string;
+        lastUpdate: string;
+        operator: string;
+    }
+): Promise<void> {
+    try {
+        const citasSheet = `citas-${number}`;
+
+        // Verificar si existe encabezado, si no, lo crea
+        const sheetData = await this.sheets.spreadsheets.values.get({
+            spreadsheetId: this.spreadsheetId,
+            range: `${citasSheet}!A:G`,
+        });
+
+        const rows = sheetData.data.values || [];
+
+        // Si no tiene encabezado, lo agrega
+        if (rows.length === 0) {
+            rows.push(["Fecha cita", "Servicio", "Sede", "Estado", "Notas", "Última actualización", "Operador"]);
+        }
+
+        // Añadir nueva cita al final
+        rows.push([
+            appointment.date,
+            appointment.service,
+            appointment.sede,
+            appointment.status,
+            appointment.notes,
+            appointment.lastUpdate,
+            appointment.operator
+        ]);
+
+        await this.sheets.spreadsheets.values.update({
+            spreadsheetId: this.spreadsheetId,
+            range: `${citasSheet}!A:G`,
+            valueInputOption: 'RAW',
+            requestBody: { values: rows },
+        });
+    } catch (error) {
+        console.error("Error al agregar la cita:", error);
+    }
+}
+
+    
+    async addAppointmentToUser(
         number: string,
         appointment: {
             date: string;
