@@ -19,14 +19,12 @@ class SheetManager {
         this.spreadsheetId = spreadsheetId;
     }
 
-    // Función para verificar si un usuario existe
     async userExists(number: string): Promise<boolean> {
         try {
             const result = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: this.spreadsheetId,
-                range: 'Users!A:A', // Asumiendo que los números de teléfono están en la columna A
+                range: 'Users!A:A',
             });
-
             const rows = result.data.values;
             if (rows) {
                 const numbers = rows.map(row => row[0]);
@@ -39,20 +37,24 @@ class SheetManager {
         }
     }
 
-    // Función para crear un usuario y una nueva pestaña
-    async createUser(number: string, name: string, mail: string, plate: string): Promise<void> {
+    async createUser(
+        number: string,
+        name: string,
+        mail: string,
+        plate: string,
+        brandModel: string,
+        fuelTransmission: string
+    ): Promise<void> {
         try {
-            // Agregar el usuario a la pestaña 'Users'
             await this.sheets.spreadsheets.values.append({
                 spreadsheetId: this.spreadsheetId,
-                range: 'Users!A:D',
+                range: 'Users!A:F',
                 valueInputOption: 'RAW',
                 requestBody: {
-                    values: [[number, name, mail, plate]],
+                    values: [[number, name, mail, plate, brandModel, fuelTransmission]],
                 },
             });
 
-            // Crear una nueva pestaña con el nombre del número de teléfono
             await this.sheets.spreadsheets.batchUpdate({
                 spreadsheetId: this.spreadsheetId,
                 requestBody: {
@@ -68,84 +70,61 @@ class SheetManager {
                 },
             });
 
+            // Añadir encabezados en la pestaña del usuario
+            await this.sheets.spreadsheets.values.update({
+                spreadsheetId: this.spreadsheetId,
+                range: `${number}!A1:G1`,
+                valueInputOption: 'RAW',
+                requestBody: {
+                    values: [
+                        ["Fecha cita", "Servicio", "Sede", "Estado", "Notas", "Última actualización", "Operador"]
+                    ],
+                },
+            });
+
         } catch (error) {
             console.error("Error al crear usuario o nueva pestaña:", error);
         }
     }
 
-    // Función para obtener las preguntas/respuestas invertidas
-    async getUserConv(number: string): Promise<any[]> {
-        try {
-            const result = await this.sheets.spreadsheets.values.get({
-                spreadsheetId: this.spreadsheetId,
-                range: `${number}!A:B`, // Asumiendo que las preguntas están en A y respuestas en B
-            });
-
-            const rows = result.data.values;
-            if (!rows || rows.length === 0) {
-                return [];
-            }
-
-            // Tomar las últimas preguntas/respuestas (hasta un máximo de 3) y revertir el orden
-            const lastConversations = rows.slice(-3).reverse();
-
-            // Formatear las respuestas en el formato solicitado
-            const formattedConversations = [];
-            for (let i = 0; i < lastConversations.length; i++) {
-                const [userQuestion, assistantAnswer] = lastConversations[i];
-                formattedConversations.push(
-                    { role: "user", content: userQuestion },
-                    { role: "assistant", content: assistantAnswer }
-                );
-            }
-
-            return formattedConversations;
-        } catch (error) {
-            console.error("Error al obtener la conversación del usuario:", error);
-            return [];
+    async addAppointmentToUser(
+        number: string,
+        appointment: {
+            date: string;
+            service: string;
+            sede: string; // "Principal" o "Aliado"
+            status: string; // "Confirmada", "Pendiente", "Cancelada"
+            notes: string;
+            lastUpdate: string;
+            operator: string;
         }
-    }
-
-    // Función para agregar una conversación al inicio de la pestaña del usuario
-    async addConverToUser(number: string, conversation: { role: string, content: string }[]): Promise<void> {
+    ): Promise<void> {
         try {
-            const question = conversation.find(c => c.role === "user")?.content;
-            const answer = conversation.find(c => c.role === "assistant")?.content;
-            const date = new Date().toISOString(); // Fecha en formato UTC
-
-            if (!question || !answer) {
-                throw new Error("La conversación debe contener tanto una pregunta como una respuesta.");
-            }
-
-            // Leer las filas actuales para empujarlas hacia abajo
             const sheetData = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: this.spreadsheetId,
-                range: `${number}!A:C`,
+                range: `${number}!A:G`,
             });
 
             const rows = sheetData.data.values || [];
+            rows.unshift([
+                appointment.date,
+                appointment.service,
+                appointment.sede,
+                appointment.status,
+                appointment.notes,
+                appointment.lastUpdate,
+                appointment.operator
+            ]);
 
-            // Agregar la nueva conversación en la primera fila
-            rows.unshift([question, answer, date]);
-
-            // Escribir las filas de nuevo en la hoja
             await this.sheets.spreadsheets.values.update({
                 spreadsheetId: this.spreadsheetId,
-                range: `${number}!A:C`,
+                range: `${number}!A:G`,
                 valueInputOption: 'RAW',
-                requestBody: {
-                    values: rows,
-                },
+                requestBody: { values: rows },
             });
 
         } catch (error) {
-            console.error("Error al agregar la conversación:", error);
+            console.error("Error al agregar la cita:", error);
         }
     }
 }
-
-export default new SheetManager(
-    config.spreadsheetId,
-    config.privateKey,
-    config.clientEmail
-);
