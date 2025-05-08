@@ -14,6 +14,7 @@ import { camAceite } from "./mechanical/camAceite";
 import { revFrenos } from "./mechanical/revFrenos";
 import { diagElectronico } from "./mechanical/diagElectronico";
 import { revSuspe } from "./mechanical/revSuspe";
+import { appointmentsFlow } from "./appointmentsFlow";
 
 export default createFlow([
   mainFlow,
@@ -26,6 +27,7 @@ export default createFlow([
   diagElectronico,
   revSuspe,
   mechanicalFlow2,
+  appointmentsFlow,
   sendImageFlow,
   sendPdfFlow,
   sendVoiceFlow,
