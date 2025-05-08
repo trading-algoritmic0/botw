@@ -14,23 +14,7 @@ const registerFlow = addKeyword(EVENTS.ACTION)
     }
   })
   .addAnswer(
-    `¿Querés comenzar con el registro?`,
-    {
-      capture: true,
-      buttons: [{ body: "Sí, quiero!" }, { body: "No, gracias!" }],
-    },
-    async (ctx, ctxFn) => {
-      if (ctx.body === "No, gracias!") {
-        return ctxFn.endFlow("✅ Registro cancelado. Podés escribirme en cualquier momento para registrarte.");
-      } else if (ctx.body === "Sí, quiero!") {
-        await ctxFn.flowDynamic("Perfecto, voy a hacerte algunas preguntas. ✍️");
-      } else {
-        return ctxFn.fallBack("⚠️ Tenés que elegir alguna de las opciones.");
-      }
-    }
-  )
-  .addAnswer(
-    `Primero, ¿cuál es tu *nombre*?`,
+    `¿Cuál es tu *nombre completo*?`,
     { capture: true },
     async (ctx, ctxFn) => {
       await ctxFn.state.update({ name: ctx.body });
@@ -38,29 +22,38 @@ const registerFlow = addKeyword(EVENTS.ACTION)
     }
   )
   .addAnswer(
-    `Ahora, ¿cuál es tu *correo electrónico*?`,
+    `¿Cuál es la *placa* de tu vehículo? (Ej: ABC123)`,
     { capture: true },
     async (ctx, ctxFn) => {
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(ctx.body)) {
-        return ctxFn.fallBack("📧 Por favor, ingresá un correo electrónico válido.");
+      const rawPlate = ctx.body.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      if (rawPlate.length < 6 || rawPlate.length > 7) {
+        return ctxFn.fallBack("🚫 Placa inválida. Ejemplo correcto: ABC123.");
       }
-      await ctxFn.state.update({ email: ctx.body });
+      await ctxFn.state.update({ plate: rawPlate });
     }
   )
   .addAnswer(
-    `Por último, ¿cuál es la *placa* de tu vehículo? (Ej: DFG456 sin guión, todo junto y en mayúsculas)`,
+    `¿Cuál es la *marca y modelo* de tu vehículo? (Ej: Toyota Corolla)`,
     { capture: true },
     async (ctx, ctxFn) => {
-      const rawPlate = ctx.body;
-      const normalizedPlate = rawPlate.toUpperCase().replace(/[^A-Z0-9]/g, "");
-
-      if (normalizedPlate.length < 6 || normalizedPlate.length > 7) {
-        return ctxFn.fallBack("🚫 Placa inválida. Asegurate de escribirla en este formato: *DFG456*, sin guiones ni espacios.");
-      }
+      await ctxFn.state.update({ brandModel: ctx.body });
+    }
+  )
+  .addAnswer(
+    `¿Cuál es el *tipo de combustible y transmisión*? (Ej: Gasolina Automático)`,
+    { capture: true },
+    async (ctx, ctxFn) => {
+      await ctxFn.state.update({ fuelTransmission: ctx.body });
 
       const state = ctxFn.state.getMyState();
-      await sheetsService.createUser(ctx.from, state.name, state.email, normalizedPlate);
+      await sheetsService.createUser(
+        ctx.from,
+        state.name,
+        "-", // correo (marcador vacío)
+        state.plate,
+        state.brandModel,
+        state.fuelTransmission
+      );
 
       await ctxFn.flowDynamic([
         "✅ ¡Registro completo!",
