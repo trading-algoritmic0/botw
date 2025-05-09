@@ -2,6 +2,10 @@ import { google } from "googleapis";
 import { sheets_v4 } from "googleapis/build/src/apis/sheets";
 import { config } from "../config";
 
+import { google } from "googleapis";
+import { sheets_v4 } from "googleapis/build/src/apis/sheets";
+import { config } from "../config";
+
 class SheetManager {
     private sheets: sheets_v4.Sheets;
     private spreadsheetId: string;
@@ -19,16 +23,22 @@ class SheetManager {
         this.spreadsheetId = spreadsheetId;
     }
 
+    private normalizeNumber(number: string): string {
+        return number.replace(/\D/g, '');
+    }
+
     async userExists(number: string): Promise<boolean> {
         try {
+            const normalizedNumber = this.normalizeNumber(number);
             const result = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: this.spreadsheetId,
                 range: 'Users!A:A',
             });
+            
             const rows = result.data.values;
             if (rows) {
-                const numbers = rows.map(row => row[0]);
-                return numbers.includes(number);
+                const numbers = rows.map(row => this.normalizeNumber(row[0] || ''));
+                return numbers.includes(normalizedNumber);
             }
             return false;
         } catch (error) {
@@ -46,12 +56,13 @@ class SheetManager {
         fuelTransmission: string
     ): Promise<void> {
         try {
+            const normalizedNumber = this.normalizeNumber(number);
             await this.sheets.spreadsheets.values.append({
                 spreadsheetId: this.spreadsheetId,
                 range: 'Users!A:F',
                 valueInputOption: 'RAW',
                 requestBody: {
-                    values: [[number, name, mail, plate, brandModel, fuelTransmission]],
+                    values: [[normalizedNumber, name, mail, plate, brandModel, fuelTransmission]],
                 },
             });
 
@@ -59,15 +70,15 @@ class SheetManager {
                 spreadsheetId: this.spreadsheetId,
                 requestBody: {
                     requests: [
-                        { addSheet: { properties: { title: number } } },
-                        { addSheet: { properties: { title: `citas-${number}` } } },
+                        { addSheet: { properties: { title: normalizedNumber } },
+                        { addSheet: { properties: { title: `citas-${normalizedNumber}` } },
                     ],
                 },
             });
 
             await this.sheets.spreadsheets.values.update({
                 spreadsheetId: this.spreadsheetId,
-                range: `citas-${number}!A1:G1`,
+                range: `citas-${normalizedNumber}!A1:G1`,
                 valueInputOption: 'RAW',
                 requestBody: {
                     values: [
