@@ -8,8 +8,9 @@ const registerFlow = addKeyword(EVENTS.ACTION)
     await state.update({ isUser });
     
     if (isUser) {
-      return gotoFlow(appointmentsFlow);
+      return await gotoFlow(appointmentsFlow); // ⚠️ Añadir `return` aquí
     }
+    return; // ⚠️ Asegurar que el flujo termine si el usuario existe
   })
   .addAnswer(
     `📋 Antes de agendar, necesito registrarte rápidamente.\n¿Cuál es tu *nombre completo*?`,
