@@ -3,71 +3,80 @@ import sheetsService from "../services/sheetsService";
 import { appointmentsFlow } from "./appointmentsFlow";
 
 const registerFlow = addKeyword(EVENTS.ACTION)
-  .addAction(async (ctx, { gotoFlow, state }) => {
+  // 1) Compruebo si existe y guardo flag en el estado
+  .addAction(async (ctx, { state, gotoFlow }) => {
     const isUser = await sheetsService.userExists(ctx.from);
-    await state.update({ isUser }); // guardamos flag en el estado
+    await state.update({ isUser });
+
     if (isUser) {
+      // si ya existe, voy directo a agendar
       return gotoFlow(appointmentsFlow);
     }
-    // si no está registrado, continúa con las preguntas
+    // si NO existe, sigo a los addAnswer
   })
+
+  // 2) Estas respuestas solo se disparan si el usuario NO existe
   .addAnswer(
     `📋 Antes de agendar, necesito registrarte rápidamente.\n¿Cuál es tu *nombre completo*?`,
-    { capture: true },
-    async (ctx, ctxFn) => {
-      const isUser = ctxFn.state.getMyState().isUser;
-      if (isUser) return; // skip si ya estaba registrado
-      await ctxFn.state.update({ name: ctx.body });
-      await ctxFn.flowDynamic(`Gracias ${ctx.body} 🙌`);
+    {
+      capture: true,
+      // condición: solo si aún no está registrado
+      condition: ({ state }) => !state.getMyState().isUser,
+    },
+    async (ctx, { state, flowDynamic }) => {
+      await state.update({ name: ctx.body.trim() });
+      await flowDynamic(`Gracias ${ctx.body.trim()} 🙌`);
     }
   )
   .addAnswer(
     `¿Cuál es la *placa* de tu vehículo? (Ej: ABC123)`,
-    { capture: true },
-    async (ctx, ctxFn) => {
-      const isUser = ctxFn.state.getMyState().isUser;
-      if (isUser) return;
-      const rawPlate = ctx.body.toUpperCase().replace(/[^A-Z0-9]/g, "");
-      if (rawPlate.length < 6 || rawPlate.length > 7) {
-        return ctxFn.fallBack("🚫 Placa inválida. Ejemplo correcto: ABC123.");
+    {
+      capture: true,
+      condition: ({ state }) => !state.getMyState().isUser,
+    },
+    async (ctx, { state, fallBack }) => {
+      const raw = ctx.body.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      if (raw.length < 6 || raw.length > 7) {
+        return fallBack("🚫 Placa inválida. Ejemplo correcto: ABC123.");
       }
-      await ctxFn.state.update({ plate: rawPlate });
+      await state.update({ plate: raw });
     }
   )
   .addAnswer(
     `¿Cuál es la *marca y modelo* de tu vehículo? (Ej: Toyota Corolla)`,
-    { capture: true },
-    async (ctx, ctxFn) => {
-      const isUser = ctxFn.state.getMyState().isUser;
-      if (isUser) return;
-      await ctxFn.state.update({ brandModel: ctx.body });
+    {
+      capture: true,
+      condition: ({ state }) => !state.getMyState().isUser,
+    },
+    async (ctx, { state }) => {
+      await state.update({ brandModel: ctx.body.trim() });
     }
   )
   .addAnswer(
     `¿Cuál es el *tipo de combustible y transmisión*? (Ej: Gasolina Automático)`,
-    { capture: true },
-    async (ctx, ctxFn) => {
-      const isUser = ctxFn.state.getMyState().isUser;
-      if (isUser) return;
+    {
+      capture: true,
+      condition: ({ state }) => !state.getMyState().isUser,
+    },
+    async (ctx, { state, flowDynamic, gotoFlow }) => {
+      await state.update({ fuelTransmission: ctx.body.trim() });
 
-      await ctxFn.state.update({ fuelTransmission: ctx.body });
-      const state = ctxFn.state.getMyState();
-
+      // al terminar de pedir datos, lo guardo en Sheets
+      const s = state.getMyState();
       await sheetsService.createUser(
         ctx.from,
-        state.name,
-        "-",
-        state.plate,
-        state.brandModel,
-        state.fuelTransmission
+        s.name,
+        "-",               // sin mail
+        s.plate,
+        s.brandModel,
+        s.fuelTransmission
       );
 
-      await ctxFn.flowDynamic([
+      await flowDynamic([
         "✅ ¡Registro completo!",
         "🚀 Ahora vamos a agendar tu cita."
       ]);
-
-      return ctxFn.gotoFlow(appointmentsFlow);
+      return gotoFlow(appointmentsFlow);
     }
   );
 
